@@ -1,0 +1,8 @@
+# GreenTPA Configuration
+settings:
+  warmup-time: 5 # in seconds
+  cooldown-time: 30 # in seconds
+  cancel-on-move: true
+  clickable-chat: true
+  auto-accept-default: false
+  prefix: "<green>[GreenTPA]</green> "
