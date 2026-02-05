@@ -1,6 +1,6 @@
 # GreenTPA
 
-GreenTPA is a full-featured teleportation request plugin for Paper 1.21.1, featuring a green theme and clickable chat messages.
+GreenTPA is a full-featured teleportation request plugin for Paper 1.21.11, featuring a green theme and clickable chat messages.
 
 ## Features
 
