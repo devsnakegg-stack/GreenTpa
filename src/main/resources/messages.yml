@@ -15,7 +15,7 @@ messages:
   tpcancel-sender: "<red>You cancelled the teleport request to %player%.</red>"
   no-pending-requests: "<red>You have no pending teleport requests from %player%.</red>"
   no-requests: "<red>You have no pending teleport requests.</red>"
-  warmup-start: "<green>Teleporting in %time% seconds. Do not move!</green>"
+  warmup-title: "<green><bold>Teleporting in %time%...</bold></green>"
   warmup-cancelled: "<red>Teleport cancelled because you moved!</red>"
   teleport-success: "<green>Teleported successfully!</green>"
   cooldown-active: "<red>You must wait %time% seconds before sending another request.</red>"
