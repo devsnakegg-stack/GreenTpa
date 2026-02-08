@@ -1,0 +1,108 @@
+main: me.green.tpa.GreenTPA
+version: '${project.version}'
+name: GreenTPA
+api-version: '1.21'
+softdepend: [Vault, Essentials, CMI, TheNewEconomy, Xconomy, UltraEconomy, RedisEconomy, CraftConomy3, Gringotts, Treasury]
+commands:
+  tpa:
+    description: Request to teleport to a player
+    usage: /tpa <player>
+  tpahere:
+    description: Request a player to teleport to you
+    usage: /tpahere <player>
+  tpaccept:
+    description: Accept a teleport request
+    usage: /tpaccept [player]
+  tpdeny:
+    description: Deny a teleport request
+    usage: /tpdeny [player]
+  tpcancel:
+    description: Cancel a teleport request you sent
+    usage: /tpcancel [player]
+  tpalist:
+    description: List pending teleport requests
+    usage: /tpalist
+  tptoggle:
+    description: Toggle receiving teleport requests
+    usage: /tptoggle
+  tpblock:
+    description: Block a player from sending teleport requests
+    usage: /tpblock <player>
+  tpunblock:
+    description: Unblock a player from sending teleport requests
+    usage: /tpunblock <player>
+  tpaignore:
+    description: Ignore teleport requests from a player
+    usage: /tpaignore <player>
+  tpaignoreall:
+    description: Ignore all teleport requests
+    usage: /tpaignoreall
+  tpaauto:
+    description: Toggle auto-accepting teleport requests
+    usage: /tpaauto
+  back:
+    description: Teleport to your previous location or death location
+    usage: /back
+  tpahereall:
+    description: Request all players to teleport to you
+    usage: /tpahereall
+    permission: greentpa.admin.tpahereall
+  tpo:
+    description: Teleport to a player immediately (admin)
+    usage: /tpo <player>
+    permission: greentpa.admin.tpo
+  tpohere:
+    description: Teleport a player to you immediately (admin)
+    usage: /tpohere <player>
+    permission: greentpa.admin.tpohere
+  tpareload:
+    description: Reload the plugin configuration
+    usage: /tpareload
+    permission: greentpa.admin.reload
+  rtp:
+    description: Randomly teleport within a world
+    usage: /rtp [world/nether/end]
+  home:
+    description: Teleport to a set home
+    usage: /home [name]
+  homes:
+    description: List all set homes
+    usage: /homes
+  sethome:
+    description: Set a home at current location
+    usage: /sethome [name]
+  delhome:
+    description: Delete a set home
+    usage: /delhome [name]
+  spawn:
+    description: Teleport to a world spawn
+    usage: /spawn [world <world>]
+  setspawn:
+    description: Set the spawn location for current world
+    usage: /setspawn
+  delspawn:
+    description: Delete the spawn location for a world
+    usage: /delspawn [world]
+  greentpa:
+    description: Main plugin command
+    usage: /greentpa [debug/reload]
+    aliases: [gtp]
+permissions:
+  greentpa.admin.*:
+    description: Grant all admin permissions
+    children:
+      greentpa.admin.tpahereall: true
+      greentpa.admin.tpo: true
+      greentpa.admin.tpohere: true
+      greentpa.admin.reload: true
+      greentpa.admin.setspawn: true
+      greentpa.admin.delspawn: true
+  greentpa.user:
+    description: Basic user permissions
+    default: true
+  greentpa.free:
+    description: Bypass economy pricing
+    default: false
+  greentpa.homes.unlimited:
+    description: Set unlimited homes
+    default: false

@@ -1,0 +1,82 @@
+# GreenTPA Messages
+# Use MiniMessage format: https://docs.advntr.dev/minimessage/format.html
+messages:
+  no-permission: "<red>You do not have permission to use this command.</red>"
+  player-only: "<red>This command can only be used by players.</red>"
+  player-not-found: "<red>Player '%player%' not found.</red>"
+  tpa-sent: "<green>Teleport request sent to %player%.</green>"
+  tpa-received: "<green>%player% wants to teleport to you.</green><newline><click:run_command:/tpaccept %player%><hover:show_text:'Click to accept'><green>[Accept]</green></hover></click> <click:run_command:/tpdeny %player%><hover:show_text:'Click to deny'><red>[Deny]</red></hover></click>"
+  tpahere-sent: "<green>Teleport-here request sent to %player%.</green>"
+  tpahere-received: "<green>%player% wants you to teleport to them.</green><newline><click:run_command:/tpaccept %player%><hover:show_text:'Click to accept'><green>[Accept]</green></hover></click> <click:run_command:/tpdeny %player%><hover:show_text:'Click to deny'><red>[Deny]</red></hover></click>"
+  tpaccept-receiver: "<green>You accepted the teleport request from %player%.</green>"
+  tpaccept-sender: "<green>%player% accepted your teleport request.</green>"
+  tpdeny-receiver: "<red>You denied the teleport request from %player%.</red>"
+  tpdeny-sender: "<red>%player% denied your teleport request.</red>"
+  tpcancel-sender: "<red>You cancelled the teleport request to %player%.</red>"
+  no-pending-requests: "<red>You have no pending teleport requests from %player%.</red>"
+  no-requests: "<red>You have no pending teleport requests.</red>"
+  warmup-title: "<green><bold>Teleporting in %time%...</bold></green>"
+  warmup-cancelled: "<red>Teleport cancelled because you moved!</red>"
+  teleport-success: "<green>Teleported successfully!</green>"
+  cooldown-active: "<red>You must wait %time% seconds before sending another request.</red>"
+  tptoggle-on: "<green>You can now receive teleport requests.</green>"
+  tptoggle-off: "<red>You will no longer receive teleport requests.</red>"
+  target-disabled-tpa: "<red>%player% has teleport requests disabled.</red>"
+  tpblock-success: "<green>You blocked %player% from sending you requests.</green>"
+  tpunblock-success: "<green>You unblocked %player%.</green>"
+  target-blocked-you: "<red>You cannot send requests to this player.</red>"
+  tpaignore-on: "<green>You are now ignoring requests from %player%.</green>"
+  tpaignore-off: "<green>You are no longer ignoring requests from %player%.</green>"
+  tpaignoreall-on: "<green>You are now ignoring all teleport requests.</green>"
+  tpaignoreall-off: "<green>You are no longer ignoring all teleport requests.</green>"
+  tpaauto-on: "<green>Auto-accept is now enabled.</green>"
+  tpaauto-off: "<red>Auto-accept is now disabled.</red>"
+  back-no-location: "<red>You don't have a previous location to return to.</red>"
+  tpahereall-sent: "<green>Sent teleport-here requests to all players.</green>"
+  reload-success: "<green>Configuration reloaded successfully.</green>"
+  tpalist-header: "<green>--- Pending Teleport Requests ---</green>"
+  tpalist-item: "<green>- %player% (%type%)</green>"
+  usage-tpa: "<red>Usage: /tpa <player></red>"
+  usage-tpahere: "<red>Usage: /tpahere <player></red>"
+  usage-tpaccept: "<red>Usage: /tpaccept [player]</red>"
+  usage-tpdeny: "<red>Usage: /tpdeny [player]</red>"
+  usage-tpcancel: "<red>Usage: /tpcancel <player></red>"
+  tpa-self: "<red>You cannot teleport to yourself!</red>"
+  no-pending-to-target: "<red>You have no pending request to %player%.</red>"
+  usage-tpblock: "<red>Usage: /tpblock <player></red>"
+  usage-tpunblock: "<red>Usage: /tpunblock <player></red>"
+  usage-tpaignore: "<red>Usage: /tpaignore <player></red>"
+  usage-tpo: "<red>Usage: /tpo <player></red>"
+  usage-tpohere: "<red>Usage: /tpohere <player></red>"
+
+  # Economy
+  economy-no-money: "<red>You do not have enough money! Cost: %price%</red>"
+  economy-refund: "<green>You have been refunded %amount% due to %reason%.</green>"
+  economy-error: "<red>An error occurred with the economy transaction.</red>"
+
+  # RTP
+  rtp-searching: "<green>Searching for a safe location...</green>"
+  rtp-no-safe-location: "<red>Could not find a safe location! Please try again.</red>"
+  world-not-found: "<red>World not found!</red>"
+
+  # Home
+  home-not-found: "<red>Home '%name%' not found!</red>"
+  home-none: "<red>You have no homes set.</red>"
+  home-list: "<green>Your homes: %homes%</green>"
+  home-set: "<green>Home '%name%' has been set at your current location.</green>"
+  home-deleted: "<red>Home '%name%' has been deleted.</red>"
+  home-limit-reached: "<red>You have reached your limit of %limit% homes!</red>"
+
+  # Spawn
+  spawn-not-found: "<red>Spawn location not set for this world.</red>"
+  spawn-set: "<green>Spawn location for world %world% has been set.</green>"
+  spawn-deleted: "<red>Spawn location for world %world% has been deleted.</red>"
+
+  # Teleport Rules
+  teleport-fail-distance: "<red>You cannot teleport that far! Max distance: %distance%</red>"
+  teleport-fail-world-in: "<red>Teleportation into %world% is restricted.</red>"
+  teleport-fail-world-out: "<red>Teleportation out of %world% is restricted.</red>"
+  teleport-fail-world-within: "<red>Teleportation within %world% is restricted.</red>"
+
+  # Security
+  security-spam: "<red>Please slow down! You are sending requests too fast.</red>"
