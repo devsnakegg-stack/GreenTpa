@@ -1,0 +1,28 @@
+# GreenTPA Commands Configuration
+# Set to false to disable a command entirely
+commands:
+  tpa: true
+  tpahere: true
+  tpaccept: true
+  tpdeny: true
+  tpcancel: true
+  tpalist: true
+  tptoggle: true
+  tpblock: true
+  tpunblock: true
+  tpaignore: true
+  tpaignoreall: true
+  tpaauto: true
+  back: true
+  tpahereall: true
+  tpo: true
+  tpohere: true
+  tpareload: true
+  rtp: true
+  home: true
+  homes: true
+  sethome: true
+  delhome: true
+  spawn: true
+  setspawn: true
+  delspawn: true
