@@ -35,7 +35,7 @@ commands:
     enabled: true
   tpohere:
     enabled: true
-  tpareload:
+  gtpreload:
     enabled: true
   rtp:
     enabled: true

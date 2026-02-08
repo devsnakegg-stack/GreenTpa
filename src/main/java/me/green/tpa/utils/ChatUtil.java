@@ -31,6 +31,16 @@ public class ChatUtil {
         return message;
     }
 
+    public String replacePlaceholders(String message, String... placeholders) {
+        if (placeholders.length % 2 != 0) {
+            throw new IllegalArgumentException("Placeholders must be in pairs of key and value");
+        }
+        for (int i = 0; i < placeholders.length; i += 2) {
+            message = message.replace(placeholders[i], placeholders[i + 1]);
+        }
+        return message;
+    }
+
     public Component parse(String message, String... placeholders) {
         if (placeholders.length % 2 != 0) {
             throw new IllegalArgumentException("Placeholders must be in pairs of key and value");

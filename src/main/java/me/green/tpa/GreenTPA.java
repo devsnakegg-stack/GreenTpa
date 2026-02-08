@@ -88,6 +88,7 @@ public class GreenTPA extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new MoveListener(this), this);
         getServer().getPluginManager().registerEvents(new DeathListener(this), this);
         getServer().getPluginManager().registerEvents(new WarmupListener(this), this);
+        getServer().getPluginManager().registerEvents(this.economyManager, this);
 
         getLogger().info("GreenTPA has been enabled!");
         getLogger().info("Detected Economy Provider: " + providerManager.detectProvider());
@@ -114,7 +115,7 @@ public class GreenTPA extends JavaPlugin {
         if (isCommandEnabled("tpahereall")) getCommand("tpahereall").setExecutor(adminCommands);
         if (isCommandEnabled("tpo")) getCommand("tpo").setExecutor(adminCommands);
         if (isCommandEnabled("tpohere")) getCommand("tpohere").setExecutor(adminCommands);
-        if (isCommandEnabled("tpareload")) getCommand("tpareload").setExecutor(adminCommands);
+        if (isCommandEnabled("gtpreload")) getCommand("gtpreload").setExecutor(adminCommands);
 
         if (isCommandEnabled("back")) getCommand("back").setExecutor(new BackCommand(this));
 
@@ -131,6 +132,8 @@ public class GreenTPA extends JavaPlugin {
         if (isCommandEnabled("spawn")) getCommand("spawn").setExecutor(spawnCommand);
         if (isCommandEnabled("setspawn")) getCommand("setspawn").setExecutor(spawnCommand);
         if (isCommandEnabled("delspawn")) getCommand("delspawn").setExecutor(spawnCommand);
+
+        getCommand("greentpa").setExecutor(new GreenTPACommand(this));
     }
 
     private boolean isCommandEnabled(String name) {

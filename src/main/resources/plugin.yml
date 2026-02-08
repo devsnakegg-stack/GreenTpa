@@ -2,7 +2,7 @@ main: me.green.tpa.GreenTPA
 version: '${project.version}'
 name: GreenTPA
 api-version: '1.21'
-softdepend: [Vault, Essentials, CMI, TheNewEconomy]
+softdepend: [Vault, Essentials, CMI, TheNewEconomy, Xconomy, UltraEconomy, RedisEconomy, CraftConomy3, Gringotts, Treasury]
 commands:
   tpa:
     description: Request to teleport to a player
@@ -55,9 +55,9 @@ commands:
     description: Teleport a player to you immediately (admin)
     usage: /tpohere <player>
     permission: greentpa.admin.tpohere
-  tpareload:
+  gtpreload:
     description: Reload the plugin configuration
-    usage: /tpareload
+    usage: /gtpreload
     permission: greentpa.admin.reload
   rtp:
     description: Randomly teleport within a world
@@ -83,6 +83,10 @@ commands:
   delspawn:
     description: Delete the spawn location for a world
     usage: /delspawn [world]
+  greentpa:
+    description: Main plugin command
+    usage: /greentpa [debug/reload]
+    aliases: [gtp]
 permissions:
   greentpa.admin.*:
     description: Grant all admin permissions

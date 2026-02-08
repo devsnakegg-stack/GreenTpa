@@ -18,6 +18,8 @@ public class ProviderManager {
         if (isPluginEnabled("AdvancedEconomy")) return "AdvancedEconomy";
         if (isPluginEnabled("QueenEconomy")) return "QueenEconomy";
         if (isPluginEnabled("Treasury")) return "Treasury";
+        if (isPluginEnabled("EconomyShopGUI")) return "EconomyShopGUI (Bridge)";
+        if (isPluginEnabled("Vault")) return "Vault (Generic)";
         return "Unknown";
     }
 

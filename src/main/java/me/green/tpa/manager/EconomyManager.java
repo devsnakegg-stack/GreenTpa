@@ -4,24 +4,44 @@ import me.green.tpa.GreenTPA;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.server.ServiceRegisterEvent;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.util.Collection;
 import java.util.UUID;
 
-public class EconomyManager {
+public class EconomyManager implements Listener {
 
     private final GreenTPA plugin;
     private Economy econ = null;
     private boolean enabled = false;
+    private String providerName = "None";
 
     public EconomyManager(GreenTPA plugin) {
         this.plugin = plugin;
     }
 
+    public void init() {
+        if (!plugin.getConfig().getBoolean("economy.enabled", true)) {
+            plugin.getLogger().info("Economy is disabled in config.");
+            return;
+        }
+
+        if (setupEconomy()) {
+            enabled = true;
+            providerName = econ.getName();
+            plugin.getLogger().info("Economy linked! Provider: " + providerName);
+        } else {
+            plugin.getLogger().warning("No economy provider found yet. Waiting for one to register...");
+            // We are already registered as a listener in GreenTPA.java (if we add it)
+        }
+    }
+
     public boolean setupEconomy() {
         if (Bukkit.getPluginManager().getPlugin("Vault") == null) {
+            plugin.getLogger().warning("Vault not found! Economy features will not work unless another supported API is added.");
             return false;
         }
 
@@ -34,7 +54,6 @@ public class EconomyManager {
                 if (rsp.getProvider().getName().equalsIgnoreCase(manualProvider) ||
                     rsp.getPlugin().getName().equalsIgnoreCase(manualProvider)) {
                     econ = rsp.getProvider();
-                    plugin.getLogger().info("Manual Economy provider selected: " + econ.getName());
                     return true;
                 }
             }
@@ -42,46 +61,46 @@ public class EconomyManager {
         }
 
         RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
-        if (rsp == null) {
-            return false;
+        if (rsp != null) {
+            econ = rsp.getProvider();
+            return econ != null;
         }
-        econ = rsp.getProvider();
-        return econ != null;
+
+        return false;
     }
 
-    public void init() {
-        if (plugin.getConfig().getBoolean("economy.enabled", false)) {
-            if (setupEconomy()) {
-                enabled = true;
-                plugin.getLogger().info("Economy linked with Vault! Provider: " + econ.getName());
-            } else {
-                plugin.getLogger().warning("Economy enabled in config but Vault or an economy provider was not found!");
+    @EventHandler
+    public void onServiceRegister(ServiceRegisterEvent event) {
+        if (event.getProvider().getService().equals(Economy.class)) {
+            plugin.getLogger().info("Economy service registered: " + event.getProvider().getProvider().getClass().getName());
+            if (!enabled) {
+                init();
             }
         }
     }
 
     public boolean isEnabled() {
-        return enabled;
+        return enabled && econ != null;
     }
 
     public double getBalance(UUID uuid) {
-        if (!enabled) return 0;
+        if (!isEnabled()) return 0;
         return econ.getBalance(Bukkit.getOfflinePlayer(uuid));
     }
 
     public boolean has(UUID uuid, double amount) {
-        if (!enabled) return true;
+        if (!isEnabled() || amount <= 0) return true;
         return econ.has(Bukkit.getOfflinePlayer(uuid), amount);
     }
 
     public boolean withdraw(UUID uuid, double amount) {
-        if (!enabled || amount <= 0) return true;
+        if (!isEnabled() || amount <= 0) return true;
         EconomyResponse r = econ.withdrawPlayer(Bukkit.getOfflinePlayer(uuid), amount);
         return r.transactionSuccess();
     }
 
     public boolean deposit(UUID uuid, double amount) {
-        if (!enabled || amount <= 0) return true;
+        if (!isEnabled() || amount <= 0) return true;
         EconomyResponse r = econ.depositPlayer(Bukkit.getOfflinePlayer(uuid), amount);
         return r.transactionSuccess();
     }
@@ -89,5 +108,9 @@ public class EconomyManager {
     public String format(double amount) {
         if (econ == null) return String.format("%.2f", amount);
         return econ.format(amount);
+    }
+
+    public String getProviderName() {
+        return providerName;
     }
 }

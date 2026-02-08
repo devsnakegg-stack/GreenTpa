@@ -18,7 +18,7 @@ public class AdminCommands implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (command.getName().equalsIgnoreCase("tpareload")) {
+        if (command.getName().equalsIgnoreCase("gtpreload")) {
             if (!sender.hasPermission("greentpa.admin.reload")) {
                 plugin.getChatUtil().sendMessage(sender, "no-permission");
                 return true;

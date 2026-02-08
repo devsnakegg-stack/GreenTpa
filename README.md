@@ -56,7 +56,7 @@ GreenTPA is a professional-grade, feature-rich teleportation and management plug
 - `/tpahereall`: Request all online players to teleport to you.
 - `/tpo <player>`: Force teleport to a player (bypasses requests/economy).
 - `/tpohere <player>`: Force a player to teleport to you.
-- `/tpareload`: Reload all plugin configurations.
+- `/gtpreload`: Reload all plugin configurations.
 
 ## 🔑 Permissions
 
@@ -67,7 +67,7 @@ GreenTPA is a professional-grade, feature-rich teleportation and management plug
 - `greentpa.admin.tpahereall`: Access to `/tpahereall`.
 - `greentpa.admin.tpo`: Access to `/tpo`.
 - `greentpa.admin.tpohere`: Access to `/tpohere`.
-- `greentpa.admin.reload`: Access to `/tpareload`.
+- `greentpa.admin.reload`: Access to `/gtpreload` (and /gtp reload).
 - `greentpa.admin.setspawn`: Access to `/setspawn`.
 - `greentpa.admin.delspawn`: Access to `/delspawn`.
 - `greentpa.admin.nocooldown`: Bypass request cooldowns.

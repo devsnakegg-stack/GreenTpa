@@ -46,6 +46,8 @@ public class TeleportManager {
 
         warmupSystems.put(player.getUniqueId(), system.toLowerCase());
 
+        String warmupType = plugin.getConfig().getString("warmup.type", "TITLE").toUpperCase();
+
         BukkitTask task = new BukkitRunnable() {
             int count = warmupTime;
 
@@ -67,13 +69,18 @@ public class TeleportManager {
                     return;
                 }
 
-                // Show title
-                String titleText = plugin.getMessagesConfig().getString("messages.warmup-title", "<green><bold>Teleporting in %time%...</bold></green>");
-                player.showTitle(Title.title(
-                        plugin.getChatUtil().parse(titleText, "%time%", String.valueOf(count)),
-                        Component.empty(),
-                        Title.Times.times(Duration.ofMillis(100), Duration.ofMillis(800), Duration.ofMillis(100))
-                ));
+                // Handle visual/chat warmup
+                if (warmupType.equals("TITLE")) {
+                    String titleText = plugin.getMessagesConfig().getString("messages.warmup-title", "<green><bold>Teleporting in %time%...</bold></green>");
+                    player.showTitle(Title.title(
+                            plugin.getChatUtil().parse(titleText, "%time%", String.valueOf(count), "{seconds}", String.valueOf(count)),
+                            Component.empty(),
+                            Title.Times.times(Duration.ofMillis(100), Duration.ofMillis(800), Duration.ofMillis(100))
+                    ));
+                } else {
+                    String chatText = plugin.getMessagesConfig().getString("messages.warmup-chat", "<green>Teleporting in %time% seconds...</green>");
+                    plugin.getChatUtil().sendRawMessage(player, plugin.getChatUtil().replacePlaceholders(chatText, "%time%", String.valueOf(count), "{seconds}", String.valueOf(count)));
+                }
 
                 // Play sound
                 player.playSound(player.getLocation(), Sound.ENTITY_CREEPER_PRIMED, 1.0f, 1.0f);
