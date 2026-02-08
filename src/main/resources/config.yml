@@ -1,4 +1,3 @@
-# GreenTPA Configuration
 core:
   plugin-name: "GreenTPA"
   version: "1.0.0"
@@ -295,4 +294,3 @@ logging:
   log-economy: true
   log-errors: true
   log-commands: true
-
