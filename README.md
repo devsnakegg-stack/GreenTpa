@@ -1,48 +1,96 @@
 # GreenTPA
 
-GreenTPA is a full-featured teleportation request plugin for Paper 1.21.11, featuring a green theme and clickable chat messages.
+GreenTPA is a professional-grade, feature-rich teleportation and management plugin for Minecraft Paper 1.21.11+. It offers a sleek green theme, clickable chat interactions, and deep integration with economy systems.
 
-## Features
+## 🌟 Features
 
-- **TPA & TPAHere**: Request to teleport to others or have them teleport to you.
-- **Clickable Messages**: Easy [Accept] and [Deny] buttons in chat.
-- **Warmup & Cooldown**: Configurable teleport delays and request limits.
-- **Movement Detection**: Teleport cancels if the player moves during warmup.
-- **Back Command**: Return to your last location or death point.
-- **Toggles & Blocks**: Control who can send you requests.
-- **Auto-Accept**: Optional automatic acceptance of requests.
-- **Admin Tools**: Force teleport commands and global requests.
-- **MiniMessage Support**: Full color and formatting support in messages.
+- **Robust TPA System**: Traditional teleport requests (TPA/TPAHere) with clickable [Accept] and [Deny] buttons.
+- **Global Economy Support**: Fully integrated with Vault and Treasury. Supports a wide range of providers including EssentialsX, CMI, Xconomy, UltraEconomy, and more.
+- **Per-World Pricing**: Configure unique costs for every command based on the target world.
+- **RTP (Random Teleport)**: Asynchronous, safe location scanning with per-world region boundaries.
+- **Multi-Home System**: Persistent player homes with configurable limits and permission-based ranks.
+- **World Spawn Management**: Set and manage spawn points for every world on your server.
+- **Visual Warmup System**: Immersive teleport countdown featuring bold titles on the main screen and Creeper-primed sound effects.
+- **Movement Detection**: Automatically cancels teleports if the player moves during the warmup period.
+- **Flexible Management**: Ignore system, player blocking, auto-accept toggles, and administrative force-teleports.
+- **Dynamic Configuration**: Enable or disable any command entirely via `commands.yml`.
+- **MiniMessage Support**: Full support for Adventure MiniMessage in all messages and prefixes.
 
-## Commands
+## 📜 Commands
 
-- `/tpa <player>`: Send a teleport request.
+### Core TPA Commands
+- `/tpa <player>`: Request to teleport to a player.
 - `/tpahere <player>`: Request a player to teleport to you.
-- `/tpaccept [player]`: Accept a request.
-- `/tpdeny [player]`: Deny a request.
-- `/tpcancel [player]`: Cancel your sent request.
-- `/tpalist`: View pending requests.
-- `/tptoggle`: Toggle receiving requests.
-- `/tpblock <player>`: Block a player.
+- `/tpaccept [player]`: Accept a teleport request.
+- `/tpdeny [player]`: Deny a teleport request.
+- `/tpcancel <player>`: Cancel a request you sent.
+- `/tpalist`: View your pending incoming requests.
+
+### RTP System
+- `/rtp`: Teleport to a random safe location in your current world.
+- `/rtp world <world>`: RTP into a specific world.
+- `/rtp nether`: RTP into the nether.
+- `/rtp end`: RTP into the end.
+
+### Home System
+- `/home [name]`: Teleport to one of your homes.
+- `/homes`: List all of your set homes.
+- `/sethome [name]`: Set a home at your current location.
+- `/delhome [name]`: Delete a specific home.
+
+### Spawn System
+- `/spawn [world <world>]`: Teleport to the world's spawn point.
+- `/setspawn`: Set the spawn point for the current world (Admin).
+- `/delspawn [world]`: Delete the spawn point for a world (Admin).
+
+### Management & Settings
+- `/back`: Return to your last location or death point.
+- `/tptoggle`: Toggle receiving teleport requests.
+- `/tpblock <player>`: Block a player from sending you requests.
 - `/tpunblock <player>`: Unblock a player.
-- `/tpaignore <player>`: Ignore a player.
-- `/tpaignoreall`: Ignore everyone.
-- `/tpaauto`: Toggle auto-accept.
-- `/back`: Return to last location.
-- `/tpahereall`: Request everyone to teleport to you (Admin).
-- `/tpo <player>`: Force teleport to a player (Admin).
-- `/tpohere <player>`: Force a player to teleport to you (Admin).
-- `/tpareload`: Reload configuration (Admin).
+- `/tpaignore <player>`: Ignore requests from a specific player.
+- `/tpaignoreall`: Toggle ignoring all teleport requests.
+- `/tpaauto`: Toggle automatic acceptance of requests.
 
-## Permissions
+### Admin Commands
+- `/tpahereall`: Request all online players to teleport to you.
+- `/tpo <player>`: Force teleport to a player (bypasses requests/economy).
+- `/tpohere <player>`: Force a player to teleport to you.
+- `/tpareload`: Reload all plugin configurations.
 
-- `greentpa.user`: Access to basic commands (default: true).
-- `greentpa.admin.tpahereall`: Use `/tpahereall`.
-- `greentpa.admin.tpo`: Use `/tpo`.
-- `greentpa.admin.tpohere`: Use `/tpohere`.
-- `greentpa.admin.reload`: Use `/tpareload`.
-- `greentpa.admin.nocooldown`: Bypass teleport cooldowns.
+## 🔑 Permissions
 
-## Configuration
+- `greentpa.user`: Access to basic player commands (default: true).
+- `greentpa.free`: Bypass all economy costs.
+- `greentpa.homes.unlimited`: Ability to set unlimited homes.
+- `greentpa.homes.<number>`: Set the maximum number of homes for a player/rank.
+- `greentpa.admin.tpahereall`: Access to `/tpahereall`.
+- `greentpa.admin.tpo`: Access to `/tpo`.
+- `greentpa.admin.tpohere`: Access to `/tpohere`.
+- `greentpa.admin.reload`: Access to `/tpareload`.
+- `greentpa.admin.setspawn`: Access to `/setspawn`.
+- `greentpa.admin.delspawn`: Access to `/delspawn`.
+- `greentpa.admin.nocooldown`: Bypass request cooldowns.
 
-The plugin uses `config.yml` for settings and `messages.yml` for all chat messages, supporting MiniMessage formatting.
+## ⚙️ Configuration
+
+GreenTPA uses several YAML files for deep customization:
+- `config.yml`: Core settings, economy mode, pricing, and RTP regions.
+- `messages.yml`: All player-visible text (supports MiniMessage).
+- `commands.yml`: Toggle individual commands on or off.
+- `data.yml`: Persistent player settings (blocks, ignores, toggles).
+- `homes.yml`: Persistent storage for player homes.
+- `spawns.yml`: Persistent storage for world spawn points.
+
+## 🛠️ Development
+
+- **Language**: Java 21
+- **API**: Paper 1.21.11-R0.1-SNAPSHOT
+- **Build Tool**: Maven
+- **Dependencies**: Vault API
+
+To build the project:
+```bash
+mvn clean package
+```
+The compiled shaded JAR will be located in the `target/` directory.

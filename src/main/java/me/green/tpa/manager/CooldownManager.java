@@ -1,38 +1,61 @@
 package me.green.tpa.manager;
 
-import org.bukkit.entity.Player;
-import java.util.HashMap;
+import me.green.tpa.GreenTPA;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class CooldownManager {
 
-    private final Map<UUID, Long> cooldowns = new HashMap<>();
-    private int cooldownTime; // in seconds
+    private final GreenTPA plugin;
+    private final Map<UUID, Map<String, Long>> systemCooldowns = new ConcurrentHashMap<>();
 
-    public CooldownManager(int cooldownTime) {
-        this.cooldownTime = cooldownTime;
+    public CooldownManager(GreenTPA plugin) {
+        this.plugin = plugin;
     }
 
-    public void setCooldownTime(int cooldownTime) {
-        this.cooldownTime = cooldownTime;
+    public void setCooldown(UUID uuid, String system) {
+        int seconds = getCooldownTime(system);
+        if (seconds <= 0) return;
+        systemCooldowns.computeIfAbsent(uuid, k -> new ConcurrentHashMap<>())
+                .put(system.toLowerCase(), System.currentTimeMillis() + (seconds * 1000L));
     }
 
-    public void setCooldown(UUID uuid) {
-        cooldowns.put(uuid, System.currentTimeMillis() + (cooldownTime * 1000L));
-    }
+    public boolean hasCooldown(UUID uuid, String system) {
+        Map<String, Long> cooldowns = systemCooldowns.get(uuid);
+        if (cooldowns == null) return false;
 
-    public boolean hasCooldown(UUID uuid) {
-        if (!cooldowns.containsKey(uuid)) return false;
-        if (cooldowns.get(uuid) < System.currentTimeMillis()) {
-            cooldowns.remove(uuid);
+        Long expire = cooldowns.get(system.toLowerCase());
+        if (expire == null) return false;
+
+        if (expire < System.currentTimeMillis()) {
+            cooldowns.remove(system.toLowerCase());
             return false;
         }
         return true;
     }
 
-    public long getRemainingTime(UUID uuid) {
-        if (!cooldowns.containsKey(uuid)) return 0;
-        return (cooldowns.get(uuid) - System.currentTimeMillis()) / 1000;
+    public long getRemainingTime(UUID uuid, String system) {
+        Map<String, Long> cooldowns = systemCooldowns.get(uuid);
+        if (cooldowns == null) return 0;
+
+        Long expire = cooldowns.get(system.toLowerCase());
+        if (expire == null) return 0;
+
+        long remaining = (expire - System.currentTimeMillis()) / 1000;
+        return Math.max(0, remaining);
+    }
+
+    private int getCooldownTime(String system) {
+        String path = "cooldown.per-command." + system.toLowerCase();
+        String val = plugin.getConfig().getString(path, "default");
+        if (val.equalsIgnoreCase("default")) {
+            return plugin.getConfig().getInt("cooldown.default", 5);
+        }
+        try {
+            return Integer.parseInt(val);
+        } catch (NumberFormatException e) {
+            return plugin.getConfig().getInt("cooldown.default", 5);
+        }
     }
 }

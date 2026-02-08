@@ -3,6 +3,7 @@ package me.green.tpa;
 import me.green.tpa.commands.*;
 import me.green.tpa.listeners.DeathListener;
 import me.green.tpa.listeners.MoveListener;
+import me.green.tpa.listeners.WarmupListener;
 import me.green.tpa.manager.*;
 import me.green.tpa.utils.ChatUtil;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -19,14 +20,29 @@ public class GreenTPA extends JavaPlugin {
     private CooldownManager cooldownManager;
     private ToggleManager toggleManager;
     private TeleportManager teleportManager;
+    private EconomyManager economyManager;
+    private PriceManager priceManager;
+    private RefundManager refundManager;
+    private HomeManager homeManager;
+    private SpawnManager spawnManager;
+    private RTPManager rtpManager;
+    private ProviderManager providerManager;
+    private TeleportRulesManager teleportRulesManager;
+    private GTPSecurityManager securityManager;
+    private StorageManager storageManager;
+
     private FileConfiguration messagesConfig;
     private File messagesFile;
-    private File dataFile;
+    private FileConfiguration commandsConfig;
+    private File commandsFile;
 
     @Override
     public void onDisable() {
-        if (toggleManager != null && dataFile != null) {
-            toggleManager.save(dataFile);
+        if (storageManager != null && storageManager.getStorage() != null) {
+            storageManager.getStorage().saveToggles(toggleManager.getTpaDisabled(), toggleManager.getIgnoreAll(), toggleManager.getBlockedPlayers(), toggleManager.getIgnoredPlayers(), toggleManager.getAutoAccept());
+            storageManager.getStorage().saveHomes(homeManager.getAllHomes());
+            storageManager.getStorage().saveSpawns(spawnManager.getAllSpawns());
+            storageManager.close();
         }
         getLogger().info("GreenTPA has been disabled!");
     }
@@ -35,47 +51,90 @@ public class GreenTPA extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
         createMessagesConfig();
+        createCommandsConfig();
 
         this.chatUtil = new ChatUtil(this);
-        this.requestManager = new RequestManager();
-        this.cooldownManager = new CooldownManager(getConfig().getInt("settings.cooldown-time", 30));
+        this.requestManager = new RequestManager(this);
+        this.cooldownManager = new CooldownManager(this);
         this.toggleManager = new ToggleManager();
         this.toggleManager.setDefaultAutoAccept(getConfig().getBoolean("settings.auto-accept-default", false));
-        this.dataFile = new File(getDataFolder(), "data.yml");
-        this.toggleManager.load(this.dataFile);
+
+        this.economyManager = new EconomyManager(this);
+        this.economyManager.init();
+
+        this.priceManager = new PriceManager(this);
+        this.priceManager.load();
+
+        this.refundManager = new RefundManager(this);
+
+        this.homeManager = new HomeManager(this);
+        this.spawnManager = new SpawnManager(this);
+        this.rtpManager = new RTPManager(this);
+        this.providerManager = new ProviderManager();
+        this.teleportRulesManager = new TeleportRulesManager(this);
+        this.securityManager = new GTPSecurityManager(this);
+
+        this.storageManager = new StorageManager(this);
+        this.storageManager.init();
+
+        // Load data from storage
+        this.storageManager.getStorage().loadToggles(toggleManager.getTpaDisabled(), toggleManager.getIgnoreAll(), toggleManager.getBlockedPlayers(), toggleManager.getIgnoredPlayers(), toggleManager.getAutoAccept());
+        this.storageManager.getStorage().loadHomes(homeManager.getAllHomes());
+        this.storageManager.getStorage().loadSpawns(spawnManager.getAllSpawns());
+
         this.teleportManager = new TeleportManager(this);
 
         registerCommands();
         getServer().getPluginManager().registerEvents(new MoveListener(this), this);
         getServer().getPluginManager().registerEvents(new DeathListener(this), this);
+        getServer().getPluginManager().registerEvents(new WarmupListener(this), this);
 
         getLogger().info("GreenTPA has been enabled!");
+        getLogger().info("Detected Economy Provider: " + providerManager.detectProvider());
     }
 
     private void registerCommands() {
         TPACommand tpaCommand = new TPACommand(this);
-        getCommand("tpa").setExecutor(tpaCommand);
-        getCommand("tpahere").setExecutor(tpaCommand);
-        getCommand("tpaccept").setExecutor(tpaCommand);
-        getCommand("tpdeny").setExecutor(tpaCommand);
-        getCommand("tpcancel").setExecutor(tpaCommand);
-        getCommand("tpalist").setExecutor(tpaCommand);
+        if (isCommandEnabled("tpa")) getCommand("tpa").setExecutor(tpaCommand);
+        if (isCommandEnabled("tpahere")) getCommand("tpahere").setExecutor(tpaCommand);
+        if (isCommandEnabled("tpaccept")) getCommand("tpaccept").setExecutor(tpaCommand);
+        if (isCommandEnabled("tpdeny")) getCommand("tpdeny").setExecutor(tpaCommand);
+        if (isCommandEnabled("tpcancel")) getCommand("tpcancel").setExecutor(tpaCommand);
+        if (isCommandEnabled("tpalist")) getCommand("tpalist").setExecutor(tpaCommand);
 
         ToggleCommands toggleCommands = new ToggleCommands(this);
-        getCommand("tptoggle").setExecutor(toggleCommands);
-        getCommand("tpblock").setExecutor(toggleCommands);
-        getCommand("tpunblock").setExecutor(toggleCommands);
-        getCommand("tpaignore").setExecutor(toggleCommands);
-        getCommand("tpaignoreall").setExecutor(toggleCommands);
-        getCommand("tpaauto").setExecutor(toggleCommands);
+        if (isCommandEnabled("tptoggle")) getCommand("tptoggle").setExecutor(toggleCommands);
+        if (isCommandEnabled("tpblock")) getCommand("tpblock").setExecutor(toggleCommands);
+        if (isCommandEnabled("tpunblock")) getCommand("tpunblock").setExecutor(toggleCommands);
+        if (isCommandEnabled("tpaignore")) getCommand("tpaignore").setExecutor(toggleCommands);
+        if (isCommandEnabled("tpaignoreall")) getCommand("tpaignoreall").setExecutor(toggleCommands);
+        if (isCommandEnabled("tpaauto")) getCommand("tpaauto").setExecutor(toggleCommands);
 
         AdminCommands adminCommands = new AdminCommands(this);
-        getCommand("tpahereall").setExecutor(adminCommands);
-        getCommand("tpo").setExecutor(adminCommands);
-        getCommand("tpohere").setExecutor(adminCommands);
-        getCommand("tpareload").setExecutor(adminCommands);
+        if (isCommandEnabled("tpahereall")) getCommand("tpahereall").setExecutor(adminCommands);
+        if (isCommandEnabled("tpo")) getCommand("tpo").setExecutor(adminCommands);
+        if (isCommandEnabled("tpohere")) getCommand("tpohere").setExecutor(adminCommands);
+        if (isCommandEnabled("tpareload")) getCommand("tpareload").setExecutor(adminCommands);
 
-        getCommand("back").setExecutor(new BackCommand(this));
+        if (isCommandEnabled("back")) getCommand("back").setExecutor(new BackCommand(this));
+
+        RTPCommand rtpCommand = new RTPCommand(this);
+        if (isCommandEnabled("rtp")) getCommand("rtp").setExecutor(rtpCommand);
+
+        HomeCommand homeCommand = new HomeCommand(this);
+        if (isCommandEnabled("home")) getCommand("home").setExecutor(homeCommand);
+        if (isCommandEnabled("homes")) getCommand("homes").setExecutor(homeCommand);
+        if (isCommandEnabled("sethome")) getCommand("sethome").setExecutor(homeCommand);
+        if (isCommandEnabled("delhome")) getCommand("delhome").setExecutor(homeCommand);
+
+        SpawnCommand spawnCommand = new SpawnCommand(this);
+        if (isCommandEnabled("spawn")) getCommand("spawn").setExecutor(spawnCommand);
+        if (isCommandEnabled("setspawn")) getCommand("setspawn").setExecutor(spawnCommand);
+        if (isCommandEnabled("delspawn")) getCommand("delspawn").setExecutor(spawnCommand);
+    }
+
+    private boolean isCommandEnabled(String name) {
+        return commandsConfig.getBoolean("commands." + name + ".enabled", true);
     }
 
     public void createMessagesConfig() {
@@ -86,8 +145,20 @@ public class GreenTPA extends JavaPlugin {
         messagesConfig = YamlConfiguration.loadConfiguration(messagesFile);
     }
 
+    public void createCommandsConfig() {
+        commandsFile = new File(getDataFolder(), "commands.yml");
+        if (!commandsFile.exists()) {
+            saveResource("commands.yml", false);
+        }
+        commandsConfig = YamlConfiguration.loadConfiguration(commandsFile);
+    }
+
     public void reloadMessagesConfig() {
         messagesConfig = YamlConfiguration.loadConfiguration(messagesFile);
+    }
+
+    public void reloadCommandsConfig() {
+        commandsConfig = YamlConfiguration.loadConfiguration(commandsFile);
     }
 
     public FileConfiguration getMessagesConfig() {
@@ -99,4 +170,14 @@ public class GreenTPA extends JavaPlugin {
     public CooldownManager getCooldownManager() { return cooldownManager; }
     public ToggleManager getToggleManager() { return toggleManager; }
     public TeleportManager getTeleportManager() { return teleportManager; }
+    public EconomyManager getEconomyManager() { return economyManager; }
+    public PriceManager getPriceManager() { return priceManager; }
+    public RefundManager getRefundManager() { return refundManager; }
+    public HomeManager getHomeManager() { return homeManager; }
+    public SpawnManager getSpawnManager() { return spawnManager; }
+    public RTPManager getRtpManager() { return rtpManager; }
+    public ProviderManager getProviderManager() { return providerManager; }
+    public TeleportRulesManager getTeleportRulesManager() { return teleportRulesManager; }
+    public GTPSecurityManager getSecurityManager() { return securityManager; }
+    public StorageManager getStorageManager() { return storageManager; }
 }

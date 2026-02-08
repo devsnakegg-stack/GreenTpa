@@ -39,13 +39,24 @@ public class TPACommand implements CommandExecutor {
     }
 
     private void handleTpa(Player player, String[] args, RequestManager.RequestType type) {
+        String system = type == RequestManager.RequestType.TPA ? "tpa" : "tpahere";
+
+        if (!plugin.getSecurityManager().canRequest(player)) {
+            return;
+        }
+
+        if (!plugin.getConfig().getBoolean("features." + system, true)) {
+            plugin.getChatUtil().sendMessage(player, "no-permission");
+            return;
+        }
+
         if (args.length < 1) {
             plugin.getChatUtil().sendMessage(player, type == RequestManager.RequestType.TPA ? "usage-tpa" : "usage-tpahere");
             return;
         }
 
-        if (plugin.getCooldownManager().hasCooldown(player.getUniqueId()) && !player.hasPermission("greentpa.admin.nocooldown")) {
-            plugin.getChatUtil().sendMessage(player, "cooldown-active", "%time%", String.valueOf(plugin.getCooldownManager().getRemainingTime(player.getUniqueId())));
+        if (plugin.getCooldownManager().hasCooldown(player.getUniqueId(), system) && !player.hasPermission("greentpa.admin.nocooldown")) {
+            plugin.getChatUtil().sendMessage(player, "cooldown-active", "%time%", String.valueOf(plugin.getCooldownManager().getRemainingTime(player.getUniqueId(), system)));
             return;
         }
 
@@ -60,6 +71,10 @@ public class TPACommand implements CommandExecutor {
             return;
         }
 
+        if (!plugin.getTeleportRulesManager().canTeleport(player, player.getLocation(), target.getLocation(), system)) {
+            return;
+        }
+
         if (plugin.getToggleManager().isTpaDisabled(target.getUniqueId())) {
             plugin.getChatUtil().sendMessage(player, "target-disabled-tpa", "%player%", target.getName());
             return;
@@ -71,25 +86,38 @@ public class TPACommand implements CommandExecutor {
         }
 
         if (plugin.getToggleManager().isIgnoring(target.getUniqueId(), player.getUniqueId())) {
-            // Silently fail or send "sent" message without actually sending it?
-            // Usually ignore means target doesn't see it.
             plugin.getChatUtil().sendMessage(player, type == RequestManager.RequestType.TPA ? "tpa-sent" : "tpahere-sent", "%player%", target.getName());
+            return;
+        }
+
+        double price = plugin.getPriceManager().getPrice(system, player.getWorld().getName());
+        if (!player.hasPermission("greentpa.free") && !plugin.getEconomyManager().has(player.getUniqueId(), price)) {
+            plugin.getChatUtil().sendMessage(player, "economy-no-money", "%price%", plugin.getEconomyManager().format(price));
             return;
         }
 
         if (plugin.getToggleManager().isAutoAccept(target.getUniqueId())) {
+            if (!player.hasPermission("greentpa.free") && !plugin.getEconomyManager().withdraw(player.getUniqueId(), price)) {
+                plugin.getChatUtil().sendMessage(player, "economy-error");
+                return;
+            }
             plugin.getChatUtil().sendMessage(player, type == RequestManager.RequestType.TPA ? "tpa-sent" : "tpahere-sent", "%player%", target.getName());
             plugin.getChatUtil().sendMessage(target, type == RequestManager.RequestType.TPA ? "tpaccept-receiver" : "tpaccept-sender", "%player%", player.getName());
             if (type == RequestManager.RequestType.TPA) {
-                plugin.getTeleportManager().teleport(player, target.getLocation(), false);
+                plugin.getTeleportManager().teleport(player, target.getLocation(), false, "tpa");
             } else {
-                plugin.getTeleportManager().teleport(target, player.getLocation(), false);
+                plugin.getTeleportManager().teleport(target, player.getLocation(), false, "tpahere");
             }
             return;
         }
 
-        plugin.getRequestManager().addRequest(player.getUniqueId(), target.getUniqueId(), type);
-        plugin.getCooldownManager().setCooldown(player.getUniqueId());
+        if (!player.hasPermission("greentpa.free") && !plugin.getEconomyManager().withdraw(player.getUniqueId(), price)) {
+            plugin.getChatUtil().sendMessage(player, "economy-error");
+            return;
+        }
+
+        plugin.getRequestManager().addRequest(player.getUniqueId(), target.getUniqueId(), type, price);
+        plugin.getCooldownManager().setCooldown(player.getUniqueId(), system);
 
         plugin.getChatUtil().sendMessage(player, type == RequestManager.RequestType.TPA ? "tpa-sent" : "tpahere-sent", "%player%", target.getName());
         plugin.getChatUtil().sendMessage(target, type == RequestManager.RequestType.TPA ? "tpa-received" : "tpahere-received", "%player%", player.getName());
@@ -124,9 +152,9 @@ public class TPACommand implements CommandExecutor {
         plugin.getChatUtil().sendMessage(sender, "tpaccept-sender", "%player%", player.getName());
 
         if (request.getType() == RequestManager.RequestType.TPA) {
-            plugin.getTeleportManager().teleport(sender, player.getLocation(), false);
+            plugin.getTeleportManager().teleport(sender, player.getLocation(), false, "tpa");
         } else {
-            plugin.getTeleportManager().teleport(player, sender.getLocation(), false);
+            plugin.getTeleportManager().teleport(player, sender.getLocation(), false, "tpahere");
         }
 
         plugin.getRequestManager().removeRequest(request);
@@ -153,6 +181,9 @@ public class TPACommand implements CommandExecutor {
         Player sender = Bukkit.getPlayer(request.getSender());
         if (sender != null) {
             plugin.getChatUtil().sendMessage(sender, "tpdeny-sender", "%player%", player.getName());
+            if (plugin.getRefundManager().shouldRefund("on-deny")) {
+                plugin.getRefundManager().refund(sender, request.getCost(), "deny");
+            }
         }
         plugin.getChatUtil().sendMessage(player, "tpdeny-receiver", "%player%", sender != null ? sender.getName() : "Unknown");
 
@@ -178,6 +209,9 @@ public class TPACommand implements CommandExecutor {
         }
 
         plugin.getChatUtil().sendMessage(player, "tpcancel-sender", "%player%", target.getName());
+        if (plugin.getRefundManager().shouldRefund("on-cancel")) {
+            plugin.getRefundManager().refund(player, request.getCost(), "cancel");
+        }
         plugin.getRequestManager().removeRequest(request);
     }
 

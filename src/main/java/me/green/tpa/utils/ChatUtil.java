@@ -26,6 +26,9 @@ public class ChatUtil {
             message = message.replace(placeholders[i], placeholders[i + 1]);
         }
 
+        // Support legacy color codes
+        message = message.replace("&", "§");
+
         if (!plugin.getConfig().getBoolean("settings.clickable-chat", true)) {
              return MiniMessage.builder()
                 .tags(TagResolver.builder()
@@ -36,10 +39,10 @@ public class ChatUtil {
                     .resolver(StandardTags.newline())
                     .build())
                 .build()
-                .deserialize(message);
+                .deserialize(miniMessage.serialize(LegacyComponentSerializer.legacySection().deserialize(message)));
         }
 
-        return miniMessage.deserialize(message);
+        return miniMessage.deserialize(miniMessage.serialize(LegacyComponentSerializer.legacySection().deserialize(message)));
     }
 
     public void sendMessage(CommandSender sender, String messageKey, String... placeholders) {

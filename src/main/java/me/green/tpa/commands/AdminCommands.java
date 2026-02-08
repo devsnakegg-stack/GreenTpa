@@ -25,7 +25,8 @@ public class AdminCommands implements CommandExecutor {
             }
             plugin.reloadConfig();
             plugin.reloadMessagesConfig();
-            plugin.getCooldownManager().setCooldownTime(plugin.getConfig().getInt("settings.cooldown-time", 30));
+            plugin.reloadCommandsConfig();
+            plugin.getPriceManager().load();
             plugin.getToggleManager().setDefaultAutoAccept(plugin.getConfig().getBoolean("settings.auto-accept-default", false));
             plugin.getChatUtil().sendMessage(sender, "reload-success");
             return true;
@@ -44,7 +45,7 @@ public class AdminCommands implements CommandExecutor {
                 }
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     if (p.equals(player)) continue;
-                    plugin.getRequestManager().addRequest(player.getUniqueId(), p.getUniqueId(), me.green.tpa.manager.RequestManager.RequestType.TPAHERE);
+                    plugin.getRequestManager().addRequest(player.getUniqueId(), p.getUniqueId(), me.green.tpa.manager.RequestManager.RequestType.TPAHERE, 0.0);
                     plugin.getChatUtil().sendMessage(p, "tpahere-received", "%player%", player.getName());
                 }
                 plugin.getChatUtil().sendMessage(player, "tpahereall-sent");
@@ -63,7 +64,7 @@ public class AdminCommands implements CommandExecutor {
                     plugin.getChatUtil().sendMessage(player, "player-not-found", "%player%", args[0]);
                     return true;
                 }
-                plugin.getTeleportManager().teleport(player, target.getLocation(), true);
+                plugin.getTeleportManager().teleport(player, target.getLocation(), true, "tpo");
             }
             case "tpohere" -> {
                 if (!player.hasPermission("greentpa.admin.tpohere")) {
@@ -79,7 +80,7 @@ public class AdminCommands implements CommandExecutor {
                     plugin.getChatUtil().sendMessage(player, "player-not-found", "%player%", args[0]);
                     return true;
                 }
-                plugin.getTeleportManager().teleport(target, player.getLocation(), true);
+                plugin.getTeleportManager().teleport(target, player.getLocation(), true, "tpohere");
             }
         }
 

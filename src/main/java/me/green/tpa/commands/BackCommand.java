@@ -23,13 +23,38 @@ public class BackCommand implements CommandExecutor {
             return true;
         }
 
+        if (!plugin.getConfig().getBoolean("features.back", true)) {
+            plugin.getChatUtil().sendMessage(player, "no-permission");
+            return true;
+        }
+
         Location backLoc = plugin.getTeleportManager().getBackLocation(player.getUniqueId());
         if (backLoc == null) {
             plugin.getChatUtil().sendMessage(player, "back-no-location");
             return true;
         }
 
-        plugin.getTeleportManager().teleport(player, backLoc, false);
+        if (plugin.getCooldownManager().hasCooldown(player.getUniqueId(), "back") && !player.hasPermission("greentpa.admin.nocooldown")) {
+            plugin.getChatUtil().sendMessage(player, "cooldown-active", "%time%", String.valueOf(plugin.getCooldownManager().getRemainingTime(player.getUniqueId(), "back")));
+            return true;
+        }
+
+        if (!plugin.getTeleportRulesManager().canTeleport(player, player.getLocation(), backLoc, "back")) {
+            return true;
+        }
+
+        double price = plugin.getPriceManager().getPrice("back", backLoc.getWorld().getName());
+        if (!player.hasPermission("greentpa.free") && !plugin.getEconomyManager().has(player.getUniqueId(), price)) {
+            plugin.getChatUtil().sendMessage(player, "economy-no-money", "%price%", plugin.getEconomyManager().format(price));
+            return true;
+        }
+
+        if (plugin.getEconomyManager().withdraw(player.getUniqueId(), price)) {
+            plugin.getCooldownManager().setCooldown(player.getUniqueId(), "back");
+            plugin.getTeleportManager().teleport(player, backLoc, false, "back");
+        } else {
+            plugin.getChatUtil().sendMessage(player, "economy-error");
+        }
         return true;
     }
 }

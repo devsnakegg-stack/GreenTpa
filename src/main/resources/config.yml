@@ -1,8 +1,298 @@
 # GreenTPA Configuration
-settings:
-  warmup-time: 5 # in seconds
-  cooldown-time: 30 # in seconds
+core:
+  plugin-name: "GreenTPA"
+  version: "1.0.0"
+  language: "en"
+  debug: false
+  logging: true
+  async-processing: true
+  metrics: true
+
+features:
+  tpa: true
+  tpahere: true
+  back: true
+  home: true
+  spawn: true
+  rtp: true
+
+economy:
+  enabled: true
+  vault: true
+  mode: "auto"                # auto | manual
+  manual-provider: "EssentialsX"
+  fallback-provider: "Vault"
+  auto-detect: true
+  multi-payment: true
+  admin-bypass: true
+  providers:
+    - EssentialsX
+    - CMI
+    - TheNewEconomy
+    - Xconomy
+    - UltraEconomy
+    - RedisEconomy
+    - CraftConomy3
+    - Gringotts
+    - Treasury
+
+pricing:
+  global:
+    tpa: 50
+    tpahere: 75
+    back: 30
+    home: 20
+    spawn: 10
+    rtp: 100
+  per-world:
+    world:
+      tpa: 50
+      tpahere: 75
+      back: 30
+      home: 20
+      spawn: 10
+      rtp: 100
+    world_nether:
+      tpa: 100
+      tpahere: 150
+      back: 60
+      home: 40
+      spawn: 50
+      rtp: 250
+    world_the_end:
+      rtp: 300
+      spawn: 100
+
+refund:
+  on-deny: true
+  on-cancel: true
+  on-expire: true
+  on-fail: true
+  on-error: true
+
+requests:
+  lifetime: 60
+  allow-multiple: true
+  notify-expire: true
+  notify-replace: true
+  restrict-movement:
+    tpa: requester
+    tpahere: requester
+
+warmup:
+  default: 3
   cancel-on-move: true
-  clickable-chat: true
-  auto-accept-default: false
-  prefix: "<green>[GreenTPA]</green> "
+  cancel-on-rotate: true
+  cancel-on-damage: true
+  cancel-on-teleport: true
+  per-command:
+    tpa: default
+    tpahere: default
+    home: default
+    spawn: default
+    back: default
+    rtp: default
+
+cooldown:
+  default: 5
+  add-warmup: true
+  global-lock: false
+  apply-after: "request"      # request | accept | teleport
+  per-command:
+    tpa: default
+    tpahere: default
+    home: default
+    spawn: default
+    back: default
+    rtp: default
+
+teleport-rules:
+  distance-limit:
+    enabled: true
+    max-distance: 10000
+    monitor-all-teleports: false
+    per-command:
+      tpa: default
+      tpahere: default
+      home: default
+      spawn: default
+      back: default
+      rtp: default
+
+  world-rules:
+    enabled: true
+    default: allow
+    world:
+      allow-within: true
+      allow-out: true
+      allow-in: true
+    world_nether:
+      allow-within: true
+      allow-out: false
+      allow-in: true
+    world_the_end:
+      allow-within: true
+      allow-out: true
+      allow-in: false
+
+  command-rules:
+    tpa:
+      override-world-rules: false
+      force-allow: false
+    tpahere:
+      override-world-rules: false
+      force-allow: false
+    home:
+      override-world-rules: false
+      force-allow: false
+    spawn:
+      override-world-rules: true
+      force-allow: true
+    back:
+      override-world-rules: false
+      force-allow: false
+    rtp:
+      override-world-rules: false
+      force-allow: false
+
+rtp:
+  enabled: true
+  async: true
+  rapid-response: true
+  prepared-locations: 5
+  attempts: 25
+  world-border: true
+  claim-protection: true
+  load-chunks: false
+  safety-checks:
+    air-check: true
+    lava-check: true
+    void-check: true
+    water-check: true
+  avoid-blocks:
+    - LAVA
+    - WATER
+    - VOID_AIR
+    - CACTUS
+    - FIRE
+  avoid-biomes:
+    - OCEAN
+    - DEEP_OCEAN
+    - FROZEN_OCEAN
+  regions:
+    world:
+      x: [-5000, 5000]
+      z: [-5000, 5000]
+      y:
+        min: 60
+        max: 320
+    world_nether:
+      x: [-1500, 1500]
+      z: [-1500, 1500]
+      y:
+        min: 40
+        max: 120
+    world_the_end:
+      x: [-2000, 2000]
+      z: [-2000, 2000]
+      y:
+        min: 50
+        max: 200
+
+home:
+  enabled: true
+  default-limit: 1
+  permission-limits: true
+  rank-limits: true
+  multi-home: true
+  bed-home: true
+  deny-over-limit: false
+  hide-denied: false
+  per-world: true
+  cross-world: true
+
+spawn:
+  enabled: true
+  first-join: true
+  every-join: false
+  multi-world: true
+  per-world-spawn: true
+  force-safe-location: true
+  respawn-system:
+    default: spawn
+    world: spawn
+    world_nether: bed
+    world_the_end: rtp
+
+back:
+  enabled: true
+  store-on:
+    teleport: true
+    death: true
+    world-change: true
+  causes:
+    - COMMAND
+    - PLUGIN
+    - SPECTATE
+    - UNKNOWN
+  safe-search-radius: 5
+  max-history: 5
+
+storage:
+  type: "sqlite"              # yaml | sqlite | mysql
+  autosave: true
+  save-interval: 300
+  cache:
+    enabled: true
+    size: 1000
+    expire: 600
+  mysql:
+    enabled: false
+    host: "127.0.0.1"
+    port: 3306
+    database: "greentpa"
+    username: "root"
+    password: "password"
+    table-prefix: "gtp_"
+    pool-size: 10
+    ssl: false
+
+security:
+  anti-spam: true
+  anti-abuse: true
+  anti-bot: true
+  max-requests-per-minute: 5
+  spam-timeout: 30
+  ip-cooldown: 10
+  flood-protection: true
+
+admin:
+  bypass:
+    economy: true
+    warmup: true
+    cooldown: true
+    restrictions: true
+    world-rules: true
+    safety-checks: true
+
+permissions:
+  default:
+    - greentpa.user.tpa
+    - greentpa.user.tpahere
+    - greentpa.user.home
+    - greentpa.user.spawn
+    - greentpa.user.back
+    - greentpa.user.rtp
+  admin:
+    - greentpa.admin.*
+    - greentpa.bypass.*
+
+logging:
+  file: true
+  file-name: "log"
+  console: true
+  log-teleports: true
+  log-economy: true
+  log-errors: true
+  log-commands: true
+

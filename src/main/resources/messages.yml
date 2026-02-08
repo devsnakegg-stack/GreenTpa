@@ -5,9 +5,9 @@ messages:
   player-only: "<red>This command can only be used by players.</red>"
   player-not-found: "<red>Player '%player%' not found.</red>"
   tpa-sent: "<green>Teleport request sent to %player%.</green>"
-  tpa-received: "<green>%player% wants to teleport to you.</green><br><click:run_command:/tpaccept %player%><hover:show_text:'Click to accept'><green>[Accept]</green></hover></click> <click:run_command:/tpdeny %player%><hover:show_text:'Click to deny'><red>[Deny]</red></hover></click>"
+  tpa-received: "<green>%player% wants to teleport to you.</green><newline><click:run_command:/tpaccept %player%><hover:show_text:'Click to accept'><green>[Accept]</green></hover></click> <click:run_command:/tpdeny %player%><hover:show_text:'Click to deny'><red>[Deny]</red></hover></click>"
   tpahere-sent: "<green>Teleport-here request sent to %player%.</green>"
-  tpahere-received: "<green>%player% wants you to teleport to them.</green><br><click:run_command:/tpaccept %player%><hover:show_text:'Click to accept'><green>[Accept]</green></hover></click> <click:run_command:/tpdeny %player%><hover:show_text:'Click to deny'><red>[Deny]</red></hover></click>"
+  tpahere-received: "<green>%player% wants you to teleport to them.</green><newline><click:run_command:/tpaccept %player%><hover:show_text:'Click to accept'><green>[Accept]</green></hover></click> <click:run_command:/tpdeny %player%><hover:show_text:'Click to deny'><red>[Deny]</red></hover></click>"
   tpaccept-receiver: "<green>You accepted the teleport request from %player%.</green>"
   tpaccept-sender: "<green>%player% accepted your teleport request.</green>"
   tpdeny-receiver: "<red>You denied the teleport request from %player%.</red>"
@@ -48,3 +48,35 @@ messages:
   usage-tpaignore: "<red>Usage: /tpaignore <player></red>"
   usage-tpo: "<red>Usage: /tpo <player></red>"
   usage-tpohere: "<red>Usage: /tpohere <player></red>"
+
+  # Economy
+  economy-no-money: "<red>You do not have enough money! Cost: %price%</red>"
+  economy-refund: "<green>You have been refunded %amount% due to %reason%.</green>"
+  economy-error: "<red>An error occurred with the economy transaction.</red>"
+
+  # RTP
+  rtp-searching: "<green>Searching for a safe location...</green>"
+  rtp-no-safe-location: "<red>Could not find a safe location! Please try again.</red>"
+  world-not-found: "<red>World not found!</red>"
+
+  # Home
+  home-not-found: "<red>Home '%name%' not found!</red>"
+  home-none: "<red>You have no homes set.</red>"
+  home-list: "<green>Your homes: %homes%</green>"
+  home-set: "<green>Home '%name%' has been set at your current location.</green>"
+  home-deleted: "<red>Home '%name%' has been deleted.</red>"
+  home-limit-reached: "<red>You have reached your limit of %limit% homes!</red>"
+
+  # Spawn
+  spawn-not-found: "<red>Spawn location not set for this world.</red>"
+  spawn-set: "<green>Spawn location for world %world% has been set.</green>"
+  spawn-deleted: "<red>Spawn location for world %world% has been deleted.</red>"
+
+  # Teleport Rules
+  teleport-fail-distance: "<red>You cannot teleport that far! Max distance: %distance%</red>"
+  teleport-fail-world-in: "<red>Teleportation into %world% is restricted.</red>"
+  teleport-fail-world-out: "<red>Teleportation out of %world% is restricted.</red>"
+  teleport-fail-world-within: "<red>Teleportation within %world% is restricted.</red>"
+
+  # Security
+  security-spam: "<red>Please slow down! You are sending requests too fast.</red>"

@@ -2,6 +2,7 @@ main: me.green.tpa.GreenTPA
 version: '${project.version}'
 name: GreenTPA
 api-version: '1.21'
+softdepend: [Vault, Essentials, CMI, TheNewEconomy]
 commands:
   tpa:
     description: Request to teleport to a player
@@ -58,6 +59,30 @@ commands:
     description: Reload the plugin configuration
     usage: /tpareload
     permission: greentpa.admin.reload
+  rtp:
+    description: Randomly teleport within a world
+    usage: /rtp [world/nether/end]
+  home:
+    description: Teleport to a set home
+    usage: /home [name]
+  homes:
+    description: List all set homes
+    usage: /homes
+  sethome:
+    description: Set a home at current location
+    usage: /sethome [name]
+  delhome:
+    description: Delete a set home
+    usage: /delhome [name]
+  spawn:
+    description: Teleport to a world spawn
+    usage: /spawn [world <world>]
+  setspawn:
+    description: Set the spawn location for current world
+    usage: /setspawn
+  delspawn:
+    description: Delete the spawn location for a world
+    usage: /delspawn [world]
 permissions:
   greentpa.admin.*:
     description: Grant all admin permissions
@@ -66,6 +91,14 @@ permissions:
       greentpa.admin.tpo: true
       greentpa.admin.tpohere: true
       greentpa.admin.reload: true
+      greentpa.admin.setspawn: true
+      greentpa.admin.delspawn: true
   greentpa.user:
     description: Basic user permissions
     default: true
+  greentpa.free:
+    description: Bypass economy pricing
+    default: false
+  greentpa.homes.unlimited:
+    description: Set unlimited homes
+    default: false
