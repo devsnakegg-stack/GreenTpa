@@ -115,7 +115,7 @@ public class GreenTPA extends JavaPlugin {
         if (isCommandEnabled("tpahereall")) getCommand("tpahereall").setExecutor(adminCommands);
         if (isCommandEnabled("tpo")) getCommand("tpo").setExecutor(adminCommands);
         if (isCommandEnabled("tpohere")) getCommand("tpohere").setExecutor(adminCommands);
-        if (isCommandEnabled("tpareload")) getCommand("tpareload").setExecutor(adminCommands);
+        if (isCommandEnabled("gtpreload")) getCommand("gtpreload").setExecutor(adminCommands);
 
         if (isCommandEnabled("back")) getCommand("back").setExecutor(new BackCommand(this));
 

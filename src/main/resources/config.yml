@@ -1,3 +1,8 @@
+settings:
+  prefix: "<green>[GreenTPA]</green> "
+  clickable-chat: true
+  auto-accept-default: false
+
 core:
   plugin-name: "GreenTPA"
   version: "1.0.0"
@@ -80,6 +85,7 @@ requests:
 
 warmup:
   default: 3
+  type: TITLE                 # CHAT | TITLE
   cancel-on-move: true
   cancel-on-rotate: true
   cancel-on-damage: true

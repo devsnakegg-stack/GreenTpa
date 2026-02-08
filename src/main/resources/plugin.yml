@@ -55,9 +55,9 @@ commands:
     description: Teleport a player to you immediately (admin)
     usage: /tpohere <player>
     permission: greentpa.admin.tpohere
-  tpareload:
+  gtpreload:
     description: Reload the plugin configuration
-    usage: /tpareload
+    usage: /gtpreload
     permission: greentpa.admin.reload
   rtp:
     description: Randomly teleport within a world
