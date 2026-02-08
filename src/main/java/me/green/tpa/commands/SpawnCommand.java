@@ -77,7 +77,7 @@ public class SpawnCommand implements CommandExecutor {
 
         if (plugin.getEconomyManager().withdraw(player.getUniqueId(), price)) {
             plugin.getCooldownManager().setCooldown(player.getUniqueId(), "spawn");
-            plugin.getTeleportManager().teleport(player, spawn.getLocation(), false, "spawn");
+            plugin.getTeleportManager().teleport(player, spawn.getLocation(), false, "spawn", price);
         } else {
             plugin.getChatUtil().sendMessage(player, "economy-error");
         }

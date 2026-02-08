@@ -43,6 +43,16 @@ public class HomeCommand implements CommandExecutor {
 
     private void handleHome(Player player, String[] args) {
         String name = args.length > 0 ? args[0] : "home";
+
+        if (name.equalsIgnoreCase("bed") && plugin.getConfig().getBoolean("home.bed-home", true)) {
+            if (player.getBedSpawnLocation() == null) {
+                plugin.getChatUtil().sendMessage(player, "home-bed-not-found");
+                return;
+            }
+            teleportToLocation(player, player.getBedSpawnLocation(), "home");
+            return;
+        }
+
         Home home = plugin.getHomeManager().getHome(player.getUniqueId(), name);
 
         if (home == null) {
@@ -59,15 +69,28 @@ public class HomeCommand implements CommandExecutor {
             return;
         }
 
-        double price = plugin.getPriceManager().getPrice("home", home.getLocation().getWorld().getName());
+        teleportToLocation(player, home.getLocation(), "home");
+    }
+
+    private void teleportToLocation(Player player, org.bukkit.Location location, String system) {
+        if (plugin.getCooldownManager().hasCooldown(player.getUniqueId(), system) && !player.hasPermission("greentpa.admin.nocooldown")) {
+            plugin.getChatUtil().sendMessage(player, "cooldown-active", "%time%", String.valueOf(plugin.getCooldownManager().getRemainingTime(player.getUniqueId(), system)));
+            return;
+        }
+
+        if (!plugin.getTeleportRulesManager().canTeleport(player, player.getLocation(), location, system)) {
+            return;
+        }
+
+        double price = plugin.getPriceManager().getPrice(system, location.getWorld().getName());
         if (!player.hasPermission("greentpa.free") && !plugin.getEconomyManager().has(player.getUniqueId(), price)) {
             plugin.getChatUtil().sendMessage(player, "economy-no-money", "%price%", plugin.getEconomyManager().format(price));
             return;
         }
 
         if (plugin.getEconomyManager().withdraw(player.getUniqueId(), price)) {
-            plugin.getCooldownManager().setCooldown(player.getUniqueId(), "home");
-            plugin.getTeleportManager().teleport(player, home.getLocation(), false, "home");
+            plugin.getCooldownManager().setCooldown(player.getUniqueId(), system);
+            plugin.getTeleportManager().teleport(player, location, false, system, price);
         } else {
             plugin.getChatUtil().sendMessage(player, "economy-error");
         }

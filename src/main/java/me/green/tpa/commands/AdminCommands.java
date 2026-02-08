@@ -64,7 +64,7 @@ public class AdminCommands implements CommandExecutor {
                     plugin.getChatUtil().sendMessage(player, "player-not-found", "%player%", args[0]);
                     return true;
                 }
-                plugin.getTeleportManager().teleport(player, target.getLocation(), true, "tpo");
+                plugin.getTeleportManager().teleport(player, target.getLocation(), true, "tpo", 0.0);
             }
             case "tpohere" -> {
                 if (!player.hasPermission("greentpa.admin.tpohere")) {
@@ -80,7 +80,7 @@ public class AdminCommands implements CommandExecutor {
                     plugin.getChatUtil().sendMessage(player, "player-not-found", "%player%", args[0]);
                     return true;
                 }
-                plugin.getTeleportManager().teleport(target, player.getLocation(), true, "tpohere");
+                plugin.getTeleportManager().teleport(target, player.getLocation(), true, "tpohere", 0.0);
             }
         }
 

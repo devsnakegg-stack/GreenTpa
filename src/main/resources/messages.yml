@@ -19,6 +19,7 @@ messages:
   warmup-chat: "<green>Teleporting in {seconds} seconds. Do not move!</green>"
   warmup-cancelled: "<red>Teleport cancelled!</red>"
   teleport-success: "<green>Teleported successfully!</green>"
+  teleport-success-pay: "<green>Teleported successfully! Used %cost%.</green>"
   cooldown-active: "<red>You must wait %time% seconds before sending another request.</red>"
   tptoggle-on: "<green>You can now receive teleport requests.</green>"
   tptoggle-off: "<red>You will no longer receive teleport requests.</red>"
@@ -62,6 +63,7 @@ messages:
 
   # Home
   home-not-found: "<red>Home '%name%' not found!</red>"
+  home-bed-not-found: "<red>Your bed spawn was not found!</red>"
   home-none: "<red>You have no homes set.</red>"
   home-list: "<green>Your homes: %homes%</green>"
   home-set: "<green>Home '%name%' has been set at your current location.</green>"

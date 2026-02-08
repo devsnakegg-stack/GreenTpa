@@ -51,7 +51,7 @@ public class BackCommand implements CommandExecutor {
 
         if (plugin.getEconomyManager().withdraw(player.getUniqueId(), price)) {
             plugin.getCooldownManager().setCooldown(player.getUniqueId(), "back");
-            plugin.getTeleportManager().teleport(player, backLoc, false, "back");
+            plugin.getTeleportManager().teleport(player, backLoc, false, "back", price);
         } else {
             plugin.getChatUtil().sendMessage(player, "economy-error");
         }

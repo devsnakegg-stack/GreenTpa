@@ -82,7 +82,7 @@ public class RTPCommand implements CommandExecutor {
 
                 if (plugin.getEconomyManager().withdraw(player.getUniqueId(), price)) {
                     plugin.getCooldownManager().setCooldown(player.getUniqueId(), "rtp");
-                    plugin.getTeleportManager().teleport(player, location, false, "rtp");
+                    plugin.getTeleportManager().teleport(player, location, false, "rtp", price);
                 } else {
                     plugin.getChatUtil().sendMessage(player, "economy-error");
                 }

@@ -104,9 +104,9 @@ public class TPACommand implements CommandExecutor {
             plugin.getChatUtil().sendMessage(player, type == RequestManager.RequestType.TPA ? "tpa-sent" : "tpahere-sent", "%player%", target.getName());
             plugin.getChatUtil().sendMessage(target, type == RequestManager.RequestType.TPA ? "tpaccept-receiver" : "tpaccept-sender", "%player%", player.getName());
             if (type == RequestManager.RequestType.TPA) {
-                plugin.getTeleportManager().teleport(player, target.getLocation(), false, "tpa");
+                plugin.getTeleportManager().teleport(player, target.getLocation(), false, "tpa", price);
             } else {
-                plugin.getTeleportManager().teleport(target, player.getLocation(), false, "tpahere");
+                plugin.getTeleportManager().teleport(target, player.getLocation(), false, "tpahere", price);
             }
             return;
         }
@@ -152,9 +152,9 @@ public class TPACommand implements CommandExecutor {
         plugin.getChatUtil().sendMessage(sender, "tpaccept-sender", "%player%", player.getName());
 
         if (request.getType() == RequestManager.RequestType.TPA) {
-            plugin.getTeleportManager().teleport(sender, player.getLocation(), false, "tpa");
+            plugin.getTeleportManager().teleport(sender, player.getLocation(), false, "tpa", request.getCost());
         } else {
-            plugin.getTeleportManager().teleport(player, sender.getLocation(), false, "tpahere");
+            plugin.getTeleportManager().teleport(player, sender.getLocation(), false, "tpahere", request.getCost());
         }
 
         plugin.getRequestManager().removeRequest(request);
