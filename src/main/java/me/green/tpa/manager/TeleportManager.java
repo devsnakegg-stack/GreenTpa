@@ -26,7 +26,7 @@ public class TeleportManager {
         this.plugin = plugin;
     }
 
-    public void teleport(Player player, Location target, boolean force, String system) {
+    public void teleport(Player player, Location target, boolean force, String system, double cost) {
         setBackLocation(player, player.getLocation());
 
         // Cancel existing warmup if any
@@ -40,7 +40,7 @@ public class TeleportManager {
 
         if (force || warmupTime <= 0 || (player.hasPermission("greentpa.bypass.warmup") && plugin.getConfig().getBoolean("admin.bypass.warmup", true))) {
             player.teleport(target);
-            plugin.getChatUtil().sendMessage(player, "teleport-success");
+            sendSuccessMessage(player, cost);
             return;
         }
 
@@ -64,7 +64,7 @@ public class TeleportManager {
                     warmups.remove(player.getUniqueId());
                     warmupSystems.remove(player.getUniqueId());
                     player.teleport(target);
-                    plugin.getChatUtil().sendMessage(player, "teleport-success");
+                    sendSuccessMessage(player, cost);
                     this.cancel();
                     return;
                 }
@@ -123,6 +123,14 @@ public class TeleportManager {
 
     public String getWarmupSystem(UUID uuid) {
         return warmupSystems.get(uuid);
+    }
+
+    private void sendSuccessMessage(Player player, double cost) {
+        if (cost > 0) {
+            plugin.getChatUtil().sendMessage(player, "teleport-success-pay", "%cost%", plugin.getEconomyManager().format(cost));
+        } else {
+            plugin.getChatUtil().sendMessage(player, "teleport-success");
+        }
     }
 
     public void setBackLocation(Player player, Location location) {

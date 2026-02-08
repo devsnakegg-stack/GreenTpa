@@ -123,10 +123,17 @@ public class GreenTPA extends JavaPlugin {
         if (isCommandEnabled("rtp")) getCommand("rtp").setExecutor(rtpCommand);
 
         HomeCommand homeCommand = new HomeCommand(this);
-        if (isCommandEnabled("home")) getCommand("home").setExecutor(homeCommand);
+        HomeTabCompleter homeTabCompleter = new HomeTabCompleter(this);
+        if (isCommandEnabled("home")) {
+            getCommand("home").setExecutor(homeCommand);
+            getCommand("home").setTabCompleter(homeTabCompleter);
+        }
         if (isCommandEnabled("homes")) getCommand("homes").setExecutor(homeCommand);
         if (isCommandEnabled("sethome")) getCommand("sethome").setExecutor(homeCommand);
-        if (isCommandEnabled("delhome")) getCommand("delhome").setExecutor(homeCommand);
+        if (isCommandEnabled("delhome")) {
+            getCommand("delhome").setExecutor(homeCommand);
+            getCommand("delhome").setTabCompleter(homeTabCompleter);
+        }
 
         SpawnCommand spawnCommand = new SpawnCommand(this);
         if (isCommandEnabled("spawn")) getCommand("spawn").setExecutor(spawnCommand);
