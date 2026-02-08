@@ -33,19 +33,15 @@ public class GreenTPA extends JavaPlugin {
 
     private FileConfiguration messagesConfig;
     private File messagesFile;
-    private File dataFile;
     private FileConfiguration commandsConfig;
     private File commandsFile;
 
     @Override
     public void onDisable() {
-        if (toggleManager != null && dataFile != null) {
-            toggleManager.save(dataFile);
-        }
-        if (homeManager != null) {
-            homeManager.save();
-        }
-        if (storageManager != null) {
+        if (storageManager != null && storageManager.getStorage() != null) {
+            storageManager.getStorage().saveToggles(toggleManager.getTpaDisabled(), toggleManager.getIgnoreAll(), toggleManager.getBlockedPlayers(), toggleManager.getIgnoredPlayers(), toggleManager.getAutoAccept());
+            storageManager.getStorage().saveHomes(homeManager.getAllHomes());
+            storageManager.getStorage().saveSpawns(spawnManager.getAllSpawns());
             storageManager.close();
         }
         getLogger().info("GreenTPA has been disabled!");
@@ -62,8 +58,6 @@ public class GreenTPA extends JavaPlugin {
         this.cooldownManager = new CooldownManager(this);
         this.toggleManager = new ToggleManager();
         this.toggleManager.setDefaultAutoAccept(getConfig().getBoolean("settings.auto-accept-default", false));
-        this.dataFile = new File(getDataFolder(), "data.yml");
-        this.toggleManager.load(this.dataFile);
 
         this.economyManager = new EconomyManager(this);
         this.economyManager.init();
@@ -74,17 +68,19 @@ public class GreenTPA extends JavaPlugin {
         this.refundManager = new RefundManager(this);
 
         this.homeManager = new HomeManager(this);
-        this.homeManager.load();
-
         this.spawnManager = new SpawnManager(this);
-        this.spawnManager.load();
-
         this.rtpManager = new RTPManager(this);
         this.providerManager = new ProviderManager();
         this.teleportRulesManager = new TeleportRulesManager(this);
         this.securityManager = new GTPSecurityManager(this);
+
         this.storageManager = new StorageManager(this);
         this.storageManager.init();
+
+        // Load data from storage
+        this.storageManager.getStorage().loadToggles(toggleManager.getTpaDisabled(), toggleManager.getIgnoreAll(), toggleManager.getBlockedPlayers(), toggleManager.getIgnoredPlayers(), toggleManager.getAutoAccept());
+        this.storageManager.getStorage().loadHomes(homeManager.getAllHomes());
+        this.storageManager.getStorage().loadSpawns(spawnManager.getAllSpawns());
 
         this.teleportManager = new TeleportManager(this);
 

@@ -238,7 +238,7 @@ back:
   max-history: 5
 
 storage:
-  type: "sqlite"              # sqlite | mysql
+  type: "sqlite"              # yaml | sqlite | mysql
   autosave: true
   save-interval: 300
   cache:

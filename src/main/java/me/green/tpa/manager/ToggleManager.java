@@ -1,13 +1,6 @@
 package me.green.tpa.manager;
 
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ToggleManager {
 
@@ -20,66 +13,6 @@ public class ToggleManager {
 
     public void setDefaultAutoAccept(boolean val) {
         this.defaultAutoAccept = val;
-    }
-
-    public void load(File file) {
-        if (!file.exists()) return;
-        FileConfiguration config = YamlConfiguration.loadConfiguration(file);
-
-        List<String> disabled = config.getStringList("tpa-disabled");
-        disabled.forEach(s -> tpaDisabled.add(UUID.fromString(s)));
-
-        List<String> ignoringAll = config.getStringList("ignore-all");
-        ignoringAll.forEach(s -> ignoreAll.add(UUID.fromString(s)));
-
-        ConfigurationSection blockedSection = config.getConfigurationSection("blocked");
-        if (blockedSection != null) {
-            for (String key : blockedSection.getKeys(false)) {
-                Set<UUID> blocked = config.getStringList("blocked." + key).stream()
-                        .map(UUID::fromString).collect(Collectors.toSet());
-                blockedPlayers.put(UUID.fromString(key), blocked);
-            }
-        }
-
-        ConfigurationSection ignoredSection = config.getConfigurationSection("ignored");
-        if (ignoredSection != null) {
-            for (String key : ignoredSection.getKeys(false)) {
-                Set<UUID> ignored = config.getStringList("ignored." + key).stream()
-                        .map(UUID::fromString).collect(Collectors.toSet());
-                ignoredPlayers.put(UUID.fromString(key), ignored);
-            }
-        }
-
-        ConfigurationSection autoAcceptSection = config.getConfigurationSection("auto-accept");
-        if (autoAcceptSection != null) {
-            for (String key : autoAcceptSection.getKeys(false)) {
-                autoAccept.put(UUID.fromString(key), config.getBoolean("auto-accept." + key));
-            }
-        }
-    }
-
-    public void save(File file) {
-        FileConfiguration config = new YamlConfiguration();
-        config.set("tpa-disabled", tpaDisabled.stream().map(UUID::toString).toList());
-        config.set("ignore-all", ignoreAll.stream().map(UUID::toString).toList());
-
-        for (Map.Entry<UUID, Set<UUID>> entry : blockedPlayers.entrySet()) {
-            config.set("blocked." + entry.getKey(), entry.getValue().stream().map(UUID::toString).toList());
-        }
-
-        for (Map.Entry<UUID, Set<UUID>> entry : ignoredPlayers.entrySet()) {
-            config.set("ignored." + entry.getKey(), entry.getValue().stream().map(UUID::toString).toList());
-        }
-
-        for (Map.Entry<UUID, Boolean> entry : autoAccept.entrySet()) {
-            config.set("auto-accept." + entry.getKey(), entry.getValue());
-        }
-
-        try {
-            config.save(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public void toggleTpa(UUID uuid) {
@@ -141,4 +74,10 @@ public class ToggleManager {
     public boolean isAutoAccept(UUID uuid) {
         return autoAccept.getOrDefault(uuid, defaultAutoAccept);
     }
+
+    public Set<UUID> getTpaDisabled() { return tpaDisabled; }
+    public Set<UUID> getIgnoreAll() { return ignoreAll; }
+    public Map<UUID, Set<UUID>> getBlockedPlayers() { return blockedPlayers; }
+    public Map<UUID, Set<UUID>> getIgnoredPlayers() { return ignoredPlayers; }
+    public Map<UUID, Boolean> getAutoAccept() { return autoAccept; }
 }
