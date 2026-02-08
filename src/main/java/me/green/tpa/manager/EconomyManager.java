@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
+import java.util.Collection;
 import java.util.UUID;
 
 public class EconomyManager {
@@ -23,6 +24,23 @@ public class EconomyManager {
         if (Bukkit.getPluginManager().getPlugin("Vault") == null) {
             return false;
         }
+
+        String mode = plugin.getConfig().getString("economy.mode", "auto");
+        String manualProvider = plugin.getConfig().getString("economy.manual-provider", "");
+
+        if (mode.equalsIgnoreCase("manual") && !manualProvider.isEmpty()) {
+            Collection<RegisteredServiceProvider<Economy>> rsps = Bukkit.getServer().getServicesManager().getRegistrations(Economy.class);
+            for (RegisteredServiceProvider<Economy> rsp : rsps) {
+                if (rsp.getProvider().getName().equalsIgnoreCase(manualProvider) ||
+                    rsp.getPlugin().getName().equalsIgnoreCase(manualProvider)) {
+                    econ = rsp.getProvider();
+                    plugin.getLogger().info("Manual Economy provider selected: " + econ.getName());
+                    return true;
+                }
+            }
+            plugin.getLogger().warning("Manual economy provider '" + manualProvider + "' not found! Falling back to auto-detection.");
+        }
+
         RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
         if (rsp == null) {
             return false;
@@ -35,7 +53,7 @@ public class EconomyManager {
         if (plugin.getConfig().getBoolean("economy.enabled", false)) {
             if (setupEconomy()) {
                 enabled = true;
-                plugin.getLogger().info("Economy linked with Vault!");
+                plugin.getLogger().info("Economy linked with Vault! Provider: " + econ.getName());
             } else {
                 plugin.getLogger().warning("Economy enabled in config but Vault or an economy provider was not found!");
             }

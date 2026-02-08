@@ -11,7 +11,11 @@ settings:
 economy:
   enabled: true
   mode: "auto"        # auto | manual
-  manual-provider: "EssentialsX"
+  manual-provider: "EssentialsX" # Name of the economy plugin or provider
+
+# Supported Providers (Auto-detected):
+# EssentialsX, CMI, TheNewEconomy, Xconomy, UltraEconomy, RedisEconomy,
+# CraftConomy3, RealEconomy, Gringotts, AdvancedEconomy, QueenEconomy, Treasury
 
 # Pricing System (per command or per world)
 # To set a world price, create a section with the world name

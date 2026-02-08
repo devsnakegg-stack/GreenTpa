@@ -9,6 +9,15 @@ public class ProviderManager {
         if (isPluginEnabled("Essentials")) return "EssentialsX";
         if (isPluginEnabled("CMI")) return "CMI";
         if (isPluginEnabled("TheNewEconomy")) return "TheNewEconomy";
+        if (isPluginEnabled("Xconomy")) return "Xconomy";
+        if (isPluginEnabled("UltraEconomy")) return "UltraEconomy";
+        if (isPluginEnabled("RedisEconomy")) return "RedisEconomy";
+        if (isPluginEnabled("CraftConomy3")) return "CraftConomy3";
+        if (isPluginEnabled("RealEconomy")) return "RealEconomy";
+        if (isPluginEnabled("Gringotts")) return "Gringotts";
+        if (isPluginEnabled("AdvancedEconomy")) return "AdvancedEconomy";
+        if (isPluginEnabled("QueenEconomy")) return "QueenEconomy";
+        if (isPluginEnabled("Treasury")) return "Treasury";
         return "Unknown";
     }
 
