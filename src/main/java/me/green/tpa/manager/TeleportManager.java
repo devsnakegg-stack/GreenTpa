@@ -19,28 +19,32 @@ public class TeleportManager {
 
     private final GreenTPA plugin;
     private final Map<UUID, BukkitTask> warmups = new HashMap<>();
+    private final Map<UUID, String> warmupSystems = new HashMap<>();
     private final Map<UUID, Location> backLocations = new HashMap<>();
 
     public TeleportManager(GreenTPA plugin) {
         this.plugin = plugin;
     }
 
-    public void teleport(Player player, Location target, boolean force) {
+    public void teleport(Player player, Location target, boolean force, String system) {
         setBackLocation(player, player.getLocation());
 
         // Cancel existing warmup if any
         if (warmups.containsKey(player.getUniqueId())) {
             warmups.get(player.getUniqueId()).cancel();
             warmups.remove(player.getUniqueId());
+            warmupSystems.remove(player.getUniqueId());
         }
 
-        if (force || plugin.getConfig().getInt("settings.warmup-time") <= 0) {
+        int warmupTime = plugin.getConfig().getInt(system.toLowerCase() + ".warmup", 0);
+
+        if (force || warmupTime <= 0) {
             player.teleport(target);
             plugin.getChatUtil().sendMessage(player, "teleport-success");
             return;
         }
 
-        int warmupTime = plugin.getConfig().getInt("settings.warmup-time");
+        warmupSystems.put(player.getUniqueId(), system.toLowerCase());
 
         BukkitTask task = new BukkitRunnable() {
             int count = warmupTime;
@@ -49,12 +53,14 @@ public class TeleportManager {
             public void run() {
                 if (!player.isOnline()) {
                     warmups.remove(player.getUniqueId());
+                    warmupSystems.remove(player.getUniqueId());
                     this.cancel();
                     return;
                 }
 
                 if (count <= 0) {
                     warmups.remove(player.getUniqueId());
+                    warmupSystems.remove(player.getUniqueId());
                     player.teleport(target);
                     plugin.getChatUtil().sendMessage(player, "teleport-success");
                     this.cancel();
@@ -81,6 +87,7 @@ public class TeleportManager {
 
     public void cancelWarmup(UUID uuid) {
         BukkitTask task = warmups.remove(uuid);
+        warmupSystems.remove(uuid);
         if (task != null) {
             task.cancel();
             Player player = Bukkit.getPlayer(uuid);
@@ -92,6 +99,10 @@ public class TeleportManager {
 
     public boolean isInWarmup(UUID uuid) {
         return warmups.containsKey(uuid);
+    }
+
+    public String getWarmupSystem(UUID uuid) {
+        return warmupSystems.get(uuid);
     }
 
     public void setBackLocation(Player player, Location location) {

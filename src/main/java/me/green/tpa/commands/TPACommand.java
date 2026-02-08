@@ -44,8 +44,9 @@ public class TPACommand implements CommandExecutor {
             return;
         }
 
-        if (plugin.getCooldownManager().hasCooldown(player.getUniqueId()) && !player.hasPermission("greentpa.admin.nocooldown")) {
-            plugin.getChatUtil().sendMessage(player, "cooldown-active", "%time%", String.valueOf(plugin.getCooldownManager().getRemainingTime(player.getUniqueId())));
+        String system = type == RequestManager.RequestType.TPA ? "tpa" : "tpahere";
+        if (plugin.getCooldownManager().hasCooldown(player.getUniqueId(), system) && !player.hasPermission("greentpa.admin.nocooldown")) {
+            plugin.getChatUtil().sendMessage(player, "cooldown-active", "%time%", String.valueOf(plugin.getCooldownManager().getRemainingTime(player.getUniqueId(), system)));
             return;
         }
 
@@ -89,9 +90,9 @@ public class TPACommand implements CommandExecutor {
             plugin.getChatUtil().sendMessage(player, type == RequestManager.RequestType.TPA ? "tpa-sent" : "tpahere-sent", "%player%", target.getName());
             plugin.getChatUtil().sendMessage(target, type == RequestManager.RequestType.TPA ? "tpaccept-receiver" : "tpaccept-sender", "%player%", player.getName());
             if (type == RequestManager.RequestType.TPA) {
-                plugin.getTeleportManager().teleport(player, target.getLocation(), false);
+                plugin.getTeleportManager().teleport(player, target.getLocation(), false, "tpa");
             } else {
-                plugin.getTeleportManager().teleport(target, player.getLocation(), false);
+                plugin.getTeleportManager().teleport(target, player.getLocation(), false, "tpahere");
             }
             return;
         }
@@ -102,7 +103,7 @@ public class TPACommand implements CommandExecutor {
         }
 
         plugin.getRequestManager().addRequest(player.getUniqueId(), target.getUniqueId(), type, price);
-        plugin.getCooldownManager().setCooldown(player.getUniqueId());
+        plugin.getCooldownManager().setCooldown(player.getUniqueId(), system, plugin.getConfig().getInt(system + ".cooldown", 0));
 
         plugin.getChatUtil().sendMessage(player, type == RequestManager.RequestType.TPA ? "tpa-sent" : "tpahere-sent", "%player%", target.getName());
         plugin.getChatUtil().sendMessage(target, type == RequestManager.RequestType.TPA ? "tpa-received" : "tpahere-received", "%player%", player.getName());
@@ -137,9 +138,9 @@ public class TPACommand implements CommandExecutor {
         plugin.getChatUtil().sendMessage(sender, "tpaccept-sender", "%player%", player.getName());
 
         if (request.getType() == RequestManager.RequestType.TPA) {
-            plugin.getTeleportManager().teleport(sender, player.getLocation(), false);
+            plugin.getTeleportManager().teleport(sender, player.getLocation(), false, "tpa");
         } else {
-            plugin.getTeleportManager().teleport(player, sender.getLocation(), false);
+            plugin.getTeleportManager().teleport(player, sender.getLocation(), false, "tpahere");
         }
 
         plugin.getRequestManager().removeRequest(request);

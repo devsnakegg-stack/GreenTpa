@@ -4,7 +4,6 @@ import me.green.tpa.GreenTPA;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
 
 public class MoveListener implements Listener {
 
@@ -16,7 +15,12 @@ public class MoveListener implements Listener {
 
     @EventHandler
     public void onMove(PlayerMoveEvent event) {
-        if (!plugin.getConfig().getBoolean("settings.cancel-on-move")) return;
+        if (!plugin.getTeleportManager().isInWarmup(event.getPlayer().getUniqueId())) return;
+
+        String system = plugin.getTeleportManager().getWarmupSystem(event.getPlayer().getUniqueId());
+        if (system == null) return;
+
+        if (!plugin.getConfig().getBoolean(system + ".cancel-on-move", true)) return;
 
         if (event.getFrom().getBlockX() == event.getTo().getBlockX() &&
             event.getFrom().getBlockY() == event.getTo().getBlockY() &&
@@ -24,8 +28,6 @@ public class MoveListener implements Listener {
             return;
         }
 
-        if (plugin.getTeleportManager().isInWarmup(event.getPlayer().getUniqueId())) {
-            plugin.getTeleportManager().cancelWarmup(event.getPlayer().getUniqueId());
-        }
+        plugin.getTeleportManager().cancelWarmup(event.getPlayer().getUniqueId());
     }
 }

@@ -27,7 +27,6 @@ public class AdminCommands implements CommandExecutor {
             plugin.reloadMessagesConfig();
             plugin.reloadCommandsConfig();
             plugin.getPriceManager().load();
-            plugin.getCooldownManager().setCooldownTime(plugin.getConfig().getInt("settings.cooldown-time", 30));
             plugin.getToggleManager().setDefaultAutoAccept(plugin.getConfig().getBoolean("settings.auto-accept-default", false));
             plugin.getChatUtil().sendMessage(sender, "reload-success");
             return true;
@@ -65,7 +64,7 @@ public class AdminCommands implements CommandExecutor {
                     plugin.getChatUtil().sendMessage(player, "player-not-found", "%player%", args[0]);
                     return true;
                 }
-                plugin.getTeleportManager().teleport(player, target.getLocation(), true);
+                plugin.getTeleportManager().teleport(player, target.getLocation(), true, "tpo");
             }
             case "tpohere" -> {
                 if (!player.hasPermission("greentpa.admin.tpohere")) {
@@ -81,7 +80,7 @@ public class AdminCommands implements CommandExecutor {
                     plugin.getChatUtil().sendMessage(player, "player-not-found", "%player%", args[0]);
                     return true;
                 }
-                plugin.getTeleportManager().teleport(target, player.getLocation(), true);
+                plugin.getTeleportManager().teleport(target, player.getLocation(), true, "tpohere");
             }
         }
 

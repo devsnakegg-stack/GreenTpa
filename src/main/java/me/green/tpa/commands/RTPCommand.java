@@ -40,6 +40,11 @@ public class RTPCommand implements CommandExecutor {
             return true;
         }
 
+        if (plugin.getCooldownManager().hasCooldown(player.getUniqueId(), "rtp") && !player.hasPermission("greentpa.admin.nocooldown")) {
+            plugin.getChatUtil().sendMessage(player, "cooldown-active", "%time%", String.valueOf(plugin.getCooldownManager().getRemainingTime(player.getUniqueId(), "rtp")));
+            return true;
+        }
+
         double price = plugin.getPriceManager().getPrice("rtp", world.getName());
         if (!player.hasPermission("greentpa.free") && !plugin.getEconomyManager().has(player.getUniqueId(), price)) {
             plugin.getChatUtil().sendMessage(player, "economy-no-money", "%price%", plugin.getEconomyManager().format(price));
@@ -55,7 +60,8 @@ public class RTPCommand implements CommandExecutor {
 
             Bukkit.getScheduler().runTask(plugin, () -> {
                 if (plugin.getEconomyManager().withdraw(player.getUniqueId(), price)) {
-                    plugin.getTeleportManager().teleport(player, location, false);
+                    plugin.getCooldownManager().setCooldown(player.getUniqueId(), "rtp", plugin.getConfig().getInt("rtp.cooldown", 0));
+                    plugin.getTeleportManager().teleport(player, location, false, "rtp");
                 } else {
                     plugin.getChatUtil().sendMessage(player, "economy-error");
                 }

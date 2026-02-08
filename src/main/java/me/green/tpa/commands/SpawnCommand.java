@@ -51,6 +51,11 @@ public class SpawnCommand implements CommandExecutor {
             return;
         }
 
+        if (plugin.getCooldownManager().hasCooldown(player.getUniqueId(), "spawn") && !player.hasPermission("greentpa.admin.nocooldown")) {
+            plugin.getChatUtil().sendMessage(player, "cooldown-active", "%time%", String.valueOf(plugin.getCooldownManager().getRemainingTime(player.getUniqueId(), "spawn")));
+            return;
+        }
+
         double price = plugin.getPriceManager().getPrice("spawn", world.getName());
         if (!player.hasPermission("greentpa.free") && !plugin.getEconomyManager().has(player.getUniqueId(), price)) {
             plugin.getChatUtil().sendMessage(player, "economy-no-money", "%price%", plugin.getEconomyManager().format(price));
@@ -58,7 +63,8 @@ public class SpawnCommand implements CommandExecutor {
         }
 
         if (plugin.getEconomyManager().withdraw(player.getUniqueId(), price)) {
-            plugin.getTeleportManager().teleport(player, spawn.getLocation(), false);
+            plugin.getCooldownManager().setCooldown(player.getUniqueId(), "spawn", plugin.getConfig().getInt("spawn.cooldown", 0));
+            plugin.getTeleportManager().teleport(player, spawn.getLocation(), false, "spawn");
         } else {
             plugin.getChatUtil().sendMessage(player, "economy-error");
         }

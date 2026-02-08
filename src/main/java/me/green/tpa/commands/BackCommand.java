@@ -29,6 +29,11 @@ public class BackCommand implements CommandExecutor {
             return true;
         }
 
+        if (plugin.getCooldownManager().hasCooldown(player.getUniqueId(), "back") && !player.hasPermission("greentpa.admin.nocooldown")) {
+            plugin.getChatUtil().sendMessage(player, "cooldown-active", "%time%", String.valueOf(plugin.getCooldownManager().getRemainingTime(player.getUniqueId(), "back")));
+            return true;
+        }
+
         double price = plugin.getPriceManager().getPrice("back", backLoc.getWorld().getName());
         if (!player.hasPermission("greentpa.free") && !plugin.getEconomyManager().has(player.getUniqueId(), price)) {
             plugin.getChatUtil().sendMessage(player, "economy-no-money", "%price%", plugin.getEconomyManager().format(price));
@@ -36,7 +41,8 @@ public class BackCommand implements CommandExecutor {
         }
 
         if (plugin.getEconomyManager().withdraw(player.getUniqueId(), price)) {
-            plugin.getTeleportManager().teleport(player, backLoc, false);
+            plugin.getCooldownManager().setCooldown(player.getUniqueId(), "back", plugin.getConfig().getInt("back.cooldown", 0));
+            plugin.getTeleportManager().teleport(player, backLoc, false, "back");
         } else {
             plugin.getChatUtil().sendMessage(player, "economy-error");
         }

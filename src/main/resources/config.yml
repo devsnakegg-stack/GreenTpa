@@ -1,8 +1,5 @@
 # GreenTPA Configuration
 settings:
-  warmup-time: 5 # in seconds
-  cooldown-time: 30 # in seconds
-  cancel-on-move: true
   clickable-chat: true
   auto-accept-default: false
   prefix: "<green>[GreenTPA]</green> "
@@ -37,8 +34,25 @@ refund:
   cancel: true
   expire: true
 
-# RTP System
+# --- Per System Configuration ---
+
+# Teleport Ask (TPA)
+tpa:
+  warmup: 5 # in seconds
+  cooldown: 30 # in seconds
+  cancel-on-move: true
+
+# Teleport Ask Here (TPAHere)
+tpahere:
+  warmup: 5
+  cooldown: 30
+  cancel-on-move: true
+
+# Random Teleport (RTP)
 rtp:
+  warmup: 3
+  cooldown: 60
+  cancel-on-move: true
   regions:
     world:
       min-x: -5000
@@ -52,5 +66,32 @@ rtp:
       max-z: 1000
 
 # Home System
+home:
+  warmup: 3
+  cooldown: 10
+  cancel-on-move: true
 homes:
   default-limit: 1
+
+# Spawn System
+spawn:
+  warmup: 3
+  cooldown: 10
+  cancel-on-move: true
+
+# Back System
+back:
+  warmup: 5
+  cooldown: 30
+  cancel-on-move: true
+
+# Admin Teleport (Force)
+tpo:
+  warmup: 0
+  cooldown: 0
+  cancel-on-move: false
+
+tpohere:
+  warmup: 0
+  cooldown: 0
+  cancel-on-move: false

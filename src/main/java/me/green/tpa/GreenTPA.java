@@ -52,7 +52,7 @@ public class GreenTPA extends JavaPlugin {
 
         this.chatUtil = new ChatUtil(this);
         this.requestManager = new RequestManager(this);
-        this.cooldownManager = new CooldownManager(getConfig().getInt("settings.cooldown-time", 30));
+        this.cooldownManager = new CooldownManager();
         this.toggleManager = new ToggleManager();
         this.toggleManager.setDefaultAutoAccept(getConfig().getBoolean("settings.auto-accept-default", false));
         this.dataFile = new File(getDataFolder(), "data.yml");

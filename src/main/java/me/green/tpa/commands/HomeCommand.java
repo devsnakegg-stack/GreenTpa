@@ -45,6 +45,11 @@ public class HomeCommand implements CommandExecutor {
             return;
         }
 
+        if (plugin.getCooldownManager().hasCooldown(player.getUniqueId(), "home") && !player.hasPermission("greentpa.admin.nocooldown")) {
+            plugin.getChatUtil().sendMessage(player, "cooldown-active", "%time%", String.valueOf(plugin.getCooldownManager().getRemainingTime(player.getUniqueId(), "home")));
+            return;
+        }
+
         double price = plugin.getPriceManager().getPrice("home", home.getLocation().getWorld().getName());
         if (!player.hasPermission("greentpa.free") && !plugin.getEconomyManager().has(player.getUniqueId(), price)) {
             plugin.getChatUtil().sendMessage(player, "economy-no-money", "%price%", plugin.getEconomyManager().format(price));
@@ -52,7 +57,8 @@ public class HomeCommand implements CommandExecutor {
         }
 
         if (plugin.getEconomyManager().withdraw(player.getUniqueId(), price)) {
-            plugin.getTeleportManager().teleport(player, home.getLocation(), false);
+            plugin.getCooldownManager().setCooldown(player.getUniqueId(), "home", plugin.getConfig().getInt("home.cooldown", 0));
+            plugin.getTeleportManager().teleport(player, home.getLocation(), false, "home");
         } else {
             plugin.getChatUtil().sendMessage(player, "economy-error");
         }
