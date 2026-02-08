@@ -24,13 +24,30 @@ public class RTPCommand implements CommandExecutor {
             return true;
         }
 
+        if (!plugin.getConfig().getBoolean("features.rtp", true)) {
+            plugin.getChatUtil().sendMessage(player, "no-permission");
+            return true;
+        }
+
         World world = player.getWorld();
         if (args.length > 0) {
             if (args[0].equalsIgnoreCase("world") && args.length > 1) {
+                if (!plugin.getConfig().getBoolean("commands.rtp.subcommands.world", true)) {
+                    plugin.getChatUtil().sendMessage(player, "no-permission");
+                    return true;
+                }
                 world = Bukkit.getWorld(args[1]);
             } else if (args[0].equalsIgnoreCase("nether")) {
+                if (!plugin.getConfig().getBoolean("commands.rtp.subcommands.nether", true)) {
+                    plugin.getChatUtil().sendMessage(player, "no-permission");
+                    return true;
+                }
                 world = Bukkit.getWorlds().stream().filter(w -> w.getEnvironment() == World.Environment.NETHER).findFirst().orElse(null);
             } else if (args[0].equalsIgnoreCase("end")) {
+                if (!plugin.getConfig().getBoolean("commands.rtp.subcommands.end", true)) {
+                    plugin.getChatUtil().sendMessage(player, "no-permission");
+                    return true;
+                }
                 world = Bukkit.getWorlds().stream().filter(w -> w.getEnvironment() == World.Environment.THE_END).findFirst().orElse(null);
             }
         }
@@ -59,8 +76,12 @@ public class RTPCommand implements CommandExecutor {
             }
 
             Bukkit.getScheduler().runTask(plugin, () -> {
+                if (!plugin.getTeleportRulesManager().canTeleport(player, player.getLocation(), location, "rtp")) {
+                    return;
+                }
+
                 if (plugin.getEconomyManager().withdraw(player.getUniqueId(), price)) {
-                    plugin.getCooldownManager().setCooldown(player.getUniqueId(), "rtp", plugin.getConfig().getInt("rtp.cooldown", 0));
+                    plugin.getCooldownManager().setCooldown(player.getUniqueId(), "rtp");
                     plugin.getTeleportManager().teleport(player, location, false, "rtp");
                 } else {
                     plugin.getChatUtil().sendMessage(player, "economy-error");

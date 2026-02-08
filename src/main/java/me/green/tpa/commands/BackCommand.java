@@ -23,6 +23,11 @@ public class BackCommand implements CommandExecutor {
             return true;
         }
 
+        if (!plugin.getConfig().getBoolean("features.back", true)) {
+            plugin.getChatUtil().sendMessage(player, "no-permission");
+            return true;
+        }
+
         Location backLoc = plugin.getTeleportManager().getBackLocation(player.getUniqueId());
         if (backLoc == null) {
             plugin.getChatUtil().sendMessage(player, "back-no-location");
@@ -34,6 +39,10 @@ public class BackCommand implements CommandExecutor {
             return true;
         }
 
+        if (!plugin.getTeleportRulesManager().canTeleport(player, player.getLocation(), backLoc, "back")) {
+            return true;
+        }
+
         double price = plugin.getPriceManager().getPrice("back", backLoc.getWorld().getName());
         if (!player.hasPermission("greentpa.free") && !plugin.getEconomyManager().has(player.getUniqueId(), price)) {
             plugin.getChatUtil().sendMessage(player, "economy-no-money", "%price%", plugin.getEconomyManager().format(price));
@@ -41,7 +50,7 @@ public class BackCommand implements CommandExecutor {
         }
 
         if (plugin.getEconomyManager().withdraw(player.getUniqueId(), price)) {
-            plugin.getCooldownManager().setCooldown(player.getUniqueId(), "back", plugin.getConfig().getInt("back.cooldown", 0));
+            plugin.getCooldownManager().setCooldown(player.getUniqueId(), "back");
             plugin.getTeleportManager().teleport(player, backLoc, false, "back");
         } else {
             plugin.getChatUtil().sendMessage(player, "economy-error");

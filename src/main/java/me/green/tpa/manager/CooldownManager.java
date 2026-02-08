@@ -1,14 +1,21 @@
 package me.green.tpa.manager;
 
+import me.green.tpa.GreenTPA;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CooldownManager {
 
+    private final GreenTPA plugin;
     private final Map<UUID, Map<String, Long>> systemCooldowns = new ConcurrentHashMap<>();
 
-    public void setCooldown(UUID uuid, String system, int seconds) {
+    public CooldownManager(GreenTPA plugin) {
+        this.plugin = plugin;
+    }
+
+    public void setCooldown(UUID uuid, String system) {
+        int seconds = getCooldownTime(system);
         if (seconds <= 0) return;
         systemCooldowns.computeIfAbsent(uuid, k -> new ConcurrentHashMap<>())
                 .put(system.toLowerCase(), System.currentTimeMillis() + (seconds * 1000L));
@@ -37,5 +44,18 @@ public class CooldownManager {
 
         long remaining = (expire - System.currentTimeMillis()) / 1000;
         return Math.max(0, remaining);
+    }
+
+    private int getCooldownTime(String system) {
+        String path = "cooldown.per-command." + system.toLowerCase();
+        String val = plugin.getConfig().getString(path, "default");
+        if (val.equalsIgnoreCase("default")) {
+            return plugin.getConfig().getInt("cooldown.default", 5);
+        }
+        try {
+            return Integer.parseInt(val);
+        } catch (NumberFormatException e) {
+            return plugin.getConfig().getInt("cooldown.default", 5);
+        }
     }
 }

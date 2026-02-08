@@ -39,12 +39,22 @@ public class TPACommand implements CommandExecutor {
     }
 
     private void handleTpa(Player player, String[] args, RequestManager.RequestType type) {
+        String system = type == RequestManager.RequestType.TPA ? "tpa" : "tpahere";
+
+        if (!plugin.getSecurityManager().canRequest(player)) {
+            return;
+        }
+
+        if (!plugin.getConfig().getBoolean("features." + system, true)) {
+            plugin.getChatUtil().sendMessage(player, "no-permission");
+            return;
+        }
+
         if (args.length < 1) {
             plugin.getChatUtil().sendMessage(player, type == RequestManager.RequestType.TPA ? "usage-tpa" : "usage-tpahere");
             return;
         }
 
-        String system = type == RequestManager.RequestType.TPA ? "tpa" : "tpahere";
         if (plugin.getCooldownManager().hasCooldown(player.getUniqueId(), system) && !player.hasPermission("greentpa.admin.nocooldown")) {
             plugin.getChatUtil().sendMessage(player, "cooldown-active", "%time%", String.valueOf(plugin.getCooldownManager().getRemainingTime(player.getUniqueId(), system)));
             return;
@@ -58,6 +68,10 @@ public class TPACommand implements CommandExecutor {
 
         if (target.equals(player)) {
             plugin.getChatUtil().sendMessage(player, "tpa-self");
+            return;
+        }
+
+        if (!plugin.getTeleportRulesManager().canTeleport(player, player.getLocation(), target.getLocation(), system)) {
             return;
         }
 
@@ -76,7 +90,7 @@ public class TPACommand implements CommandExecutor {
             return;
         }
 
-        double price = plugin.getPriceManager().getPrice(type == RequestManager.RequestType.TPA ? "tpa" : "tpahere", player.getWorld().getName());
+        double price = plugin.getPriceManager().getPrice(system, player.getWorld().getName());
         if (!player.hasPermission("greentpa.free") && !plugin.getEconomyManager().has(player.getUniqueId(), price)) {
             plugin.getChatUtil().sendMessage(player, "economy-no-money", "%price%", plugin.getEconomyManager().format(price));
             return;
@@ -103,7 +117,7 @@ public class TPACommand implements CommandExecutor {
         }
 
         plugin.getRequestManager().addRequest(player.getUniqueId(), target.getUniqueId(), type, price);
-        plugin.getCooldownManager().setCooldown(player.getUniqueId(), system, plugin.getConfig().getInt(system + ".cooldown", 0));
+        plugin.getCooldownManager().setCooldown(player.getUniqueId(), system);
 
         plugin.getChatUtil().sendMessage(player, type == RequestManager.RequestType.TPA ? "tpa-sent" : "tpahere-sent", "%player%", target.getName());
         plugin.getChatUtil().sendMessage(target, type == RequestManager.RequestType.TPA ? "tpa-received" : "tpahere-received", "%player%", player.getName());
@@ -167,7 +181,7 @@ public class TPACommand implements CommandExecutor {
         Player sender = Bukkit.getPlayer(request.getSender());
         if (sender != null) {
             plugin.getChatUtil().sendMessage(sender, "tpdeny-sender", "%player%", player.getName());
-            if (plugin.getRefundManager().shouldRefund("deny")) {
+            if (plugin.getRefundManager().shouldRefund("on-deny")) {
                 plugin.getRefundManager().refund(sender, request.getCost(), "deny");
             }
         }
@@ -195,7 +209,7 @@ public class TPACommand implements CommandExecutor {
         }
 
         plugin.getChatUtil().sendMessage(player, "tpcancel-sender", "%player%", target.getName());
-        if (plugin.getRefundManager().shouldRefund("cancel")) {
+        if (plugin.getRefundManager().shouldRefund("on-cancel")) {
             plugin.getRefundManager().refund(player, request.getCost(), "cancel");
         }
         plugin.getRequestManager().removeRequest(request);

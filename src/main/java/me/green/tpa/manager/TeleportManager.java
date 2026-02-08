@@ -36,9 +36,9 @@ public class TeleportManager {
             warmupSystems.remove(player.getUniqueId());
         }
 
-        int warmupTime = plugin.getConfig().getInt(system.toLowerCase() + ".warmup", 0);
+        int warmupTime = getWarmupTime(system);
 
-        if (force || warmupTime <= 0) {
+        if (force || warmupTime <= 0 || (player.hasPermission("greentpa.bypass.warmup") && plugin.getConfig().getBoolean("admin.bypass.warmup", true))) {
             player.teleport(target);
             plugin.getChatUtil().sendMessage(player, "teleport-success");
             return;
@@ -83,6 +83,19 @@ public class TeleportManager {
         }.runTaskTimer(plugin, 0L, 20L);
 
         warmups.put(player.getUniqueId(), task);
+    }
+
+    private int getWarmupTime(String system) {
+        String path = "warmup.per-command." + system.toLowerCase();
+        String val = plugin.getConfig().getString(path, "default");
+        if (val.equalsIgnoreCase("default")) {
+            return plugin.getConfig().getInt("warmup.default", 3);
+        }
+        try {
+            return Integer.parseInt(val);
+        } catch (NumberFormatException e) {
+            return plugin.getConfig().getInt("warmup.default", 3);
+        }
     }
 
     public void cancelWarmup(UUID uuid) {

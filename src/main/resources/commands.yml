@@ -1,28 +1,61 @@
 # GreenTPA Commands Configuration
-# Set to false to disable a command entirely
+# Set enabled to false to disable a command entirely.
+# You can also disable specific subcommands.
+
 commands:
-  tpa: true
-  tpahere: true
-  tpaccept: true
-  tpdeny: true
-  tpcancel: true
-  tpalist: true
-  tptoggle: true
-  tpblock: true
-  tpunblock: true
-  tpaignore: true
-  tpaignoreall: true
-  tpaauto: true
-  back: true
-  tpahereall: true
-  tpo: true
-  tpohere: true
-  tpareload: true
-  rtp: true
-  home: true
-  homes: true
-  sethome: true
-  delhome: true
-  spawn: true
-  setspawn: true
-  delspawn: true
+  tpa:
+    enabled: true
+  tpahere:
+    enabled: true
+  tpaccept:
+    enabled: true
+  tpdeny:
+    enabled: true
+  tpcancel:
+    enabled: true
+  tpalist:
+    enabled: true
+  tptoggle:
+    enabled: true
+  tpblock:
+    enabled: true
+  tpunblock:
+    enabled: true
+  tpaignore:
+    enabled: true
+  tpaignoreall:
+    enabled: true
+  tpaauto:
+    enabled: true
+  back:
+    enabled: true
+  tpahereall:
+    enabled: true
+  tpo:
+    enabled: true
+  tpohere:
+    enabled: true
+  tpareload:
+    enabled: true
+  rtp:
+    enabled: true
+    subcommands:
+      world: true
+      nether: true
+      end: true
+  home:
+    enabled: true
+  homes:
+    enabled: true
+  sethome:
+    enabled: true
+  delhome:
+    enabled: true
+  spawn:
+    enabled: true
+    subcommands:
+      world: true
+  setspawn:
+    enabled: true
+  delspawn:
+    enabled: true

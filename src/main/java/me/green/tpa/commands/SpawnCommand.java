@@ -25,6 +25,11 @@ public class SpawnCommand implements CommandExecutor {
             return true;
         }
 
+        if (!plugin.getConfig().getBoolean("features.spawn", true)) {
+            plugin.getChatUtil().sendMessage(player, "no-permission");
+            return true;
+        }
+
         switch (command.getName().toLowerCase()) {
             case "spawn" -> handleSpawn(player, args);
             case "setspawn" -> handleSetSpawn(player);
@@ -37,6 +42,10 @@ public class SpawnCommand implements CommandExecutor {
     private void handleSpawn(Player player, String[] args) {
         World world = player.getWorld();
         if (args.length > 1 && args[0].equalsIgnoreCase("world")) {
+            if (!plugin.getConfig().getBoolean("commands.spawn.subcommands.world", true)) {
+                plugin.getChatUtil().sendMessage(player, "no-permission");
+                return;
+            }
             world = Bukkit.getWorld(args[1]);
         }
 
@@ -56,6 +65,10 @@ public class SpawnCommand implements CommandExecutor {
             return;
         }
 
+        if (!plugin.getTeleportRulesManager().canTeleport(player, player.getLocation(), spawn.getLocation(), "spawn")) {
+            return;
+        }
+
         double price = plugin.getPriceManager().getPrice("spawn", world.getName());
         if (!player.hasPermission("greentpa.free") && !plugin.getEconomyManager().has(player.getUniqueId(), price)) {
             plugin.getChatUtil().sendMessage(player, "economy-no-money", "%price%", plugin.getEconomyManager().format(price));
@@ -63,7 +76,7 @@ public class SpawnCommand implements CommandExecutor {
         }
 
         if (plugin.getEconomyManager().withdraw(player.getUniqueId(), price)) {
-            plugin.getCooldownManager().setCooldown(player.getUniqueId(), "spawn", plugin.getConfig().getInt("spawn.cooldown", 0));
+            plugin.getCooldownManager().setCooldown(player.getUniqueId(), "spawn");
             plugin.getTeleportManager().teleport(player, spawn.getLocation(), false, "spawn");
         } else {
             plugin.getChatUtil().sendMessage(player, "economy-error");

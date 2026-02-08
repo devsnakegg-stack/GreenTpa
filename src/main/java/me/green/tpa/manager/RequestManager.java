@@ -42,7 +42,10 @@ public class RequestManager {
 
     private final Map<UUID, List<TPARequest>> incomingRequests = new HashMap<>();
     private final Map<UUID, List<TPARequest>> outgoingRequests = new HashMap<>();
-    private final long timeout = 60 * 1000; // 60 seconds
+
+    private long getTimeout() {
+        return plugin.getConfig().getLong("requests.lifetime", 60) * 1000;
+    }
 
     public void addRequest(UUID sender, UUID receiver, RequestType type, double cost) {
         TPARequest request = new TPARequest(sender, receiver, type, cost);
@@ -80,13 +83,14 @@ public class RequestManager {
 
     private void cleanExpired() {
         long now = System.currentTimeMillis();
+        long timeout = getTimeout();
         for (List<TPARequest> requests : incomingRequests.values()) {
             Iterator<TPARequest> it = requests.iterator();
             while (it.hasNext()) {
                 TPARequest r = it.next();
                 if (now - r.getTimestamp() > timeout) {
                     it.remove();
-                    handleRefund(r, "expire");
+                    handleRefund(r, "on-expire");
                 }
             }
         }

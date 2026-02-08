@@ -3,6 +3,7 @@ package me.green.tpa;
 import me.green.tpa.commands.*;
 import me.green.tpa.listeners.DeathListener;
 import me.green.tpa.listeners.MoveListener;
+import me.green.tpa.listeners.WarmupListener;
 import me.green.tpa.manager.*;
 import me.green.tpa.utils.ChatUtil;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -26,6 +27,9 @@ public class GreenTPA extends JavaPlugin {
     private SpawnManager spawnManager;
     private RTPManager rtpManager;
     private ProviderManager providerManager;
+    private TeleportRulesManager teleportRulesManager;
+    private GTPSecurityManager securityManager;
+    private StorageManager storageManager;
 
     private FileConfiguration messagesConfig;
     private File messagesFile;
@@ -41,6 +45,9 @@ public class GreenTPA extends JavaPlugin {
         if (homeManager != null) {
             homeManager.save();
         }
+        if (storageManager != null) {
+            storageManager.close();
+        }
         getLogger().info("GreenTPA has been disabled!");
     }
 
@@ -52,7 +59,7 @@ public class GreenTPA extends JavaPlugin {
 
         this.chatUtil = new ChatUtil(this);
         this.requestManager = new RequestManager(this);
-        this.cooldownManager = new CooldownManager();
+        this.cooldownManager = new CooldownManager(this);
         this.toggleManager = new ToggleManager();
         this.toggleManager.setDefaultAutoAccept(getConfig().getBoolean("settings.auto-accept-default", false));
         this.dataFile = new File(getDataFolder(), "data.yml");
@@ -74,12 +81,17 @@ public class GreenTPA extends JavaPlugin {
 
         this.rtpManager = new RTPManager(this);
         this.providerManager = new ProviderManager();
+        this.teleportRulesManager = new TeleportRulesManager(this);
+        this.securityManager = new GTPSecurityManager(this);
+        this.storageManager = new StorageManager(this);
+        this.storageManager.init();
 
         this.teleportManager = new TeleportManager(this);
 
         registerCommands();
         getServer().getPluginManager().registerEvents(new MoveListener(this), this);
         getServer().getPluginManager().registerEvents(new DeathListener(this), this);
+        getServer().getPluginManager().registerEvents(new WarmupListener(this), this);
 
         getLogger().info("GreenTPA has been enabled!");
         getLogger().info("Detected Economy Provider: " + providerManager.detectProvider());
@@ -126,7 +138,7 @@ public class GreenTPA extends JavaPlugin {
     }
 
     private boolean isCommandEnabled(String name) {
-        return commandsConfig.getBoolean("commands." + name, true);
+        return commandsConfig.getBoolean("commands." + name + ".enabled", true);
     }
 
     public void createMessagesConfig() {
@@ -169,4 +181,7 @@ public class GreenTPA extends JavaPlugin {
     public SpawnManager getSpawnManager() { return spawnManager; }
     public RTPManager getRtpManager() { return rtpManager; }
     public ProviderManager getProviderManager() { return providerManager; }
+    public TeleportRulesManager getTeleportRulesManager() { return teleportRulesManager; }
+    public GTPSecurityManager getSecurityManager() { return securityManager; }
+    public StorageManager getStorageManager() { return storageManager; }
 }

@@ -9,7 +9,7 @@ import java.util.Map;
 public class PriceManager {
 
     private final GreenTPA plugin;
-    private final Map<String, Double> basePrices = new HashMap<>();
+    private final Map<String, Double> globalPrices = new HashMap<>();
     private final Map<String, Map<String, Double>> worldPrices = new HashMap<>();
 
     public PriceManager(GreenTPA plugin) {
@@ -17,22 +17,28 @@ public class PriceManager {
     }
 
     public void load() {
-        basePrices.clear();
+        globalPrices.clear();
         worldPrices.clear();
 
-        ConfigurationSection pricing = plugin.getConfig().getConfigurationSection("pricing");
-        if (pricing != null) {
-            for (String key : pricing.getKeys(false)) {
-                if (pricing.isConfigurationSection(key)) {
-                    // It's a world-specific section
-                    ConfigurationSection worldSection = pricing.getConfigurationSection(key);
+        // Load global prices
+        ConfigurationSection global = plugin.getConfig().getConfigurationSection("pricing.global");
+        if (global != null) {
+            for (String key : global.getKeys(false)) {
+                globalPrices.put(key.toLowerCase(), global.getDouble(key));
+            }
+        }
+
+        // Load per-world prices
+        ConfigurationSection perWorld = plugin.getConfig().getConfigurationSection("pricing.per-world");
+        if (perWorld != null) {
+            for (String worldName : perWorld.getKeys(false)) {
+                ConfigurationSection worldSection = perWorld.getConfigurationSection(worldName);
+                if (worldSection != null) {
                     Map<String, Double> prices = new HashMap<>();
                     for (String cmd : worldSection.getKeys(false)) {
                         prices.put(cmd.toLowerCase(), worldSection.getDouble(cmd));
                     }
-                    worldPrices.put(key, prices);
-                } else {
-                    basePrices.put(key.toLowerCase(), pricing.getDouble(key));
+                    worldPrices.put(worldName, prices);
                 }
             }
         }
@@ -46,6 +52,6 @@ public class PriceManager {
                 return prices.get(command);
             }
         }
-        return basePrices.getOrDefault(command, 0.0);
+        return globalPrices.getOrDefault(command, 0.0);
     }
 }

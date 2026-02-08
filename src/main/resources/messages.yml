@@ -71,3 +71,12 @@ messages:
   spawn-not-found: "<red>Spawn location not set for this world.</red>"
   spawn-set: "<green>Spawn location for world %world% has been set.</green>"
   spawn-deleted: "<red>Spawn location for world %world% has been deleted.</red>"
+
+  # Teleport Rules
+  teleport-fail-distance: "<red>You cannot teleport that far! Max distance: %distance%</red>"
+  teleport-fail-world-in: "<red>Teleportation into %world% is restricted.</red>"
+  teleport-fail-world-out: "<red>Teleportation out of %world% is restricted.</red>"
+  teleport-fail-world-within: "<red>Teleportation within %world% is restricted.</red>"
+
+  # Security
+  security-spam: "<red>Please slow down! You are sending requests too fast.</red>"
